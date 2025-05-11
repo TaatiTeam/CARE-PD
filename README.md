@@ -1,5 +1,5 @@
-# ArchGait
-
+# CARE-PD
+CARE-PD is a benchmark dataset and evaluation suite for clinical gait analysis in Parkinson’s Disease, released as part of NeurIPS 2025 Datasets & Benchmarks Track submission.
 
 ## ⚙️ Get You Ready
 
@@ -21,11 +21,12 @@ conda activate archgait
 
 We tested our code on Python 3.9.21 and PyTorch 2.6.0
 
-#### 🔹 Option 2: Install Using Pip
+#### 🔹 Install Using Pip
 ```
 python -m venv carepd
 source carepd/bin/activate
 pip install -r requirements.txt
+pip install torch==2.6.0+cu118 torchvision==0.21.0+cu118 --index-url https://download.pytorch.org/whl/cu118
 ```
 
 
