@@ -39,6 +39,7 @@ Download the CARE-PD datasets from Dataverse and put them in the `assets/dataset
 
 #### Preprocess Data
 ##### 🔹 h36m formats
+<details>
 Download preprocessed h36m formats from Dataverse  and put them in the `assets/datasets` folder.
 Rename the folder:
 ```
@@ -48,8 +49,10 @@ You can also preprocess all datasets with the following command but it might tak
 ```
 bash scripts/preprocess_smpl2h36m.sh
 ```
+</details>
 
 ##### 🔹 HumanML3D formats
+<details>
 Download preprocessed HumanML3D formats from Dataverse  and put them in the `assets/datasets` folder.
 Rename the folder:
 ```
@@ -59,8 +62,10 @@ You can also preprocess all datasets with the following command but it might tak
 ```
 bash scripts/preprocess_smpl2humanml3d.sh
 ```
+</details>
 
 ##### 🔹 6D rotation formats
+<details>
 Download preprocessed 6D rotation formats from Dataverse  and put them in the `assets/datasets` folder.
 Rename the folder:
 ```
@@ -70,6 +75,7 @@ You can also preprocess all datasets with the following command but it might tak
 ```
 bash scripts/preprocess_smpl2sixD.sh
 ```
+</details>
 
 
 ### 3️⃣ Models and Dependencies
