@@ -141,3 +141,31 @@ python run.py \
   --ntrials 5 \
   --this_run_num 0
 ```
+
+#### 🧪 Within-Dataset Evaluation (LOSO)
+You can run final Within-Dataset evaluation on each dataset using:
+
+```
+bash scripts/eval_within_dataset.sh
+```
+This script:
+
+ - Loads the best hyperparameters from each study
+
+- Retrains the model from scratch on the full training folds
+
+- Evaluates performance in a LOSO setup
+
+- Automatically combines predictions from back and side views (for multi-view models)
+
+- Logs results and confusion matrices to reports/intra_eval/
+
+```
+python run.py \
+  --backbone motionbert \
+  --config T-SDU-PD_backright.json \
+  --hypertune 1 \
+  --tune_fresh 1 \
+  --ntrials 5 \
+  --this_run_num 0
+```
