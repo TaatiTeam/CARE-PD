@@ -82,6 +82,7 @@ bash scripts/preprocess_smpl2sixD.sh
 
 </details>
 
+Please also check [dataset.md](docs/dataset.md) for more information.
 
 ### 3️⃣ Models and Dependencies
 
