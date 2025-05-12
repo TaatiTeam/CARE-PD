@@ -55,9 +55,11 @@ bash scripts/preprocess_smpl2h36m.sh
 <details>
 Download preprocessed HumanML3D formats from Dataverse  and put them in the `assets/datasets` folder.
 Rename the folder:
-```
-mv assets/datasets/HumanML3D_preprocessed assets/datasets/HumanML3D
-```
+
+
+`mv assets/datasets/HumanML3D_preprocessed assets/datasets/HumanML3D`
+
+
 You can also preprocess all datasets with the following command but it might take quite some time:
 ```
 bash scripts/preprocess_smpl2humanml3d.sh
