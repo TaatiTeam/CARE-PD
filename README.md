@@ -122,3 +122,22 @@ python eval_encoder_hypertune.py \
   --this_run_num 0 \
   --ntrials 50
 ```
+
+#### 🧪 Tune Epochs on Other Datasets
+After hypertuning on BMCLab, you can tune only the number of epochs for each remaining dataset using:
+
+```
+bash scripts/hypertune_epochs_all_datasets.sh
+```
+
+You can also run a single dataset tuning job like:
+
+```
+python run.py \
+  --backbone motionbert \
+  --config T-SDU-PD_backright.json \
+  --hypertune 1 \
+  --tune_fresh 1 \
+  --ntrials 5 \
+  --this_run_num 0
+```
