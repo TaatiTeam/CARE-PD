@@ -104,3 +104,24 @@ Pretrained checkpoints will be downloaded in `assets/Pretrained_checkpoints`
 
 ## 🚀 Running code
 </details>
+
+
+### 🔍 Hyperparameter Tuning
+
+You can run hyperparameter tuning on the **BMCLab** dataset across all backbone models using:
+
+```
+bash scripts/hypertune_all_models.sh
+```
+
+You can also run a single tuning job manually like this:
+
+```
+python eval_encoder_hypertune.py \
+  --backbone motionbert \
+  --config BMCLab_backright.json \
+  --hypertune 1 \
+  --tune_fresh 1 \
+  --this_run_num 0 \
+  --ntrials 50
+```

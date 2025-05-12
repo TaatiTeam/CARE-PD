@@ -1,0 +1,6 @@
+{
+    "skip": false,
+    "dataset": "T-SDU-PD",
+    "views": ["backright"],
+    "experiment_name": "knn"
+}

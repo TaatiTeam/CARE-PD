@@ -475,7 +475,7 @@ def main_world(cfg):
         if cfg.db == '3DGait':
             wham_id = list(out.keys())[0]
             smpl_data = out[wham_id]
-        elif cfg.db in ['T-SDU-PD', 'PD-GaM', 'BMClab', 'DNE']:
+        elif cfg.db in ['T-SDU-PD', 'PD-GaM', 'BMCLab', 'DNE']:
             smpl_data = out
             
         down_sample_rate = int(cfg.fps / cfg.exfps)
@@ -512,7 +512,7 @@ def main_world(cfg):
     print(f"Number of sqeuences in world cooridnates: {len(result)}")
 
 
- # SUPPORTED_DATASETS = ['BMCLab', 'T-SDU-PD', 'PD-GaM', '3DGAIT', 'DNE', 'E-LC', 'KUL-DT-T', 'T-LTC', 'T-SDU']    
+ # SUPPORTED_DATASETS = ['BMCLab', 'T-SDU-PD', 'PD-GaM', '3DGait', 'DNE', 'E-LC', 'KUL-DT-T', 'T-LTC', 'T-SDU']    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-skl', '--skeleton_format', default='h36m')

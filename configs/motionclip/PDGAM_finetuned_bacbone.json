@@ -1,0 +1,6 @@
+{
+    "skip": false,
+    "dataset": "PD-GaM",
+    "model_checkpoint_path": "/cluster/projects/taati/ivan/data/motion_encoders/Pretrained_checkpoints/motionclip/finetuned_motionclip_encoder_checkpoint_0100.pth.tar",
+    "experiment_name": "Finetune_Eval"
+}

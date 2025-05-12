@@ -1,0 +1,6 @@
+{
+    "skip": false,
+    "dataset": "PD-GaM",
+    "model_checkpoint_path": "/cluster/projects/taati/ivan/data/motion_encoders/Pretrained_checkpoints/momask/finetuned_momask_net_best_fid.tar",
+    "experiment_name": "Finetune_Eval"
+}

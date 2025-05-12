@@ -1,0 +1,5 @@
+{
+    "skip": false,
+    "dataset": "3DGait",
+    "experiment_name": "Hypertune_epochs"
+}

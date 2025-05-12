@@ -146,7 +146,7 @@ def create_humanml3d_rep_from_smpl(cfg, bm):
     np.savez(cfg.OUT_PATH / f'HumanML3D_collected.npz', **out_data)
      
             
- # SUPPORTED_DATASETS = ['BMCLab', 'T-SDU-PD', 'PD-GaM', '3DGAIT', 'DNE', 'E-LC', 'KUL-DT-T', 'T-LTC', 'T-SDU']    
+ # SUPPORTED_DATASETS = ['BMCLab', 'T-SDU-PD', 'PD-GaM', '3DGait', 'DNE', 'E-LC', 'KUL-DT-T', 'T-LTC', 'T-SDU']    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-skl', '--skeleton_format', default='h36m')

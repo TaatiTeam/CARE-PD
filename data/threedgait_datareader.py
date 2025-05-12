@@ -8,7 +8,7 @@ from const.const import DATA_TYPES_WITH_PRECOMPUTED_AUGMENTATIONS
 
 class GAIT3DReader():
     """
-    Reads the data from the PDGAM dataset
+    Reads the data from the PD-GaM dataset
     """
 
     UPDRS_SCORE_COLUMN = 'score'

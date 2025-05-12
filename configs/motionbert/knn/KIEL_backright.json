@@ -1,0 +1,6 @@
+{
+    "skip": false,
+    "dataset": "KIEL",
+    "views": ["backright"],
+    "experiment_name": "knn"
+}

@@ -1,0 +1,6 @@
+{
+    "skip": false,
+    "dataset": "PD-GaM",
+    "views": ["backright"],
+    "experiment_name": "knn"
+}

@@ -1,0 +1,6 @@
+{
+    "skip": false,
+    "dataset": "BMCLab",
+    "views": ["backright"],
+    "experiment_name": "knn"
+}

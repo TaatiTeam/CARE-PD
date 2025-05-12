@@ -14,7 +14,12 @@ NUM_OF_PATIENTS_PER_DATASET = {
     'BMCLab': 23,
     'T-SDU-PD': 14,
     'PD-GaM': 30,
-    '3DGait': 43
+    '3DGait': 43,
+    'DNE': 97,
+    'KUL-DT-T': 29,
+    'E-LC': 59,
+    'T-LTC': 14,
+    'T-SDU': 53,
 }
 NUM_CLASSES_PER_DATASET = {
     'BMCLab': 3,

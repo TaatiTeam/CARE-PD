@@ -5,7 +5,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 OUT_PATH = './experiment_outs'
 
-PREPROCESSED_DATA_ROOT_PATH = f'{PROJECT_ROOT}/data'
+PREPROCESSED_DATA_ROOT_PATH = f'{PROJECT_ROOT}/assets/preprocessed_data'
 
 # DATASET PRE PROCESSING ------------------------------------------------------------
 NEUTRAL_SMPL_MODEL_PATH=f'{PROJECT_ROOT}/body_models/SMPL_NEUTRAL.pkl'
@@ -14,183 +14,272 @@ H36M_FROM_SMPL_REGRESSOR_PATH=f'{PROJECT_ROOT}/joint_regressors/J_regressor_h36m
 # ----------------------------------------------------------------------------------
 
 # Vida's custom fold splits
-VIDAS_CUSTOM_PD_6FOLD_SPLIT = f'{PROJECT_ROOT}/data/BMCLABS_6fold_participants.pkl'
-VIDAS_CUSTOM_PD_23FOLD_SPLIT = f'{PROJECT_ROOT}/data/BMCLABS_23fold_participants.pkl'
-TRI_PD_14FOLD_LOSO_SPLIT = f'{PROJECT_ROOT}/data/TRI_PD_14fold_participants.pkl'
-PDGAM_AUTHORS_TRAIN_TEST_SPLIT = f'{PROJECT_ROOT}/data/PD4T_authors_custom_1fold_participants.pkl'
-THREEDGAIT_6FOLD_SPLIT = f'{PROJECT_ROOT}/data/3DGAIT_6fold_participants.pkl'
-THREEDGAIT_43FOLD_SPLIT = f'{PROJECT_ROOT}/data/3DGAIT_43fold_participants.pkl'
+BMCLab_6FOLD_SPLIT = f'{PROJECT_ROOT}/assets/datasets/folds/UPDRS_Datasets/BMCLab_6fold_participants.pkl'
+BMCLab_23FOLD_SPLIT = f'{PROJECT_ROOT}/assets/datasets/folds/UPDRS_Datasets/BMCLab_23fold_participants.pkl'
+T_SDU_PD_14FOLD_LOSO_SPLIT = f'{PROJECT_ROOT}/assets/datasets/folds/UPDRS_Datasets/T-SDU-PD_14fold_participants.pkl'
+PD_GaM_AUTHORS_TRAIN_TEST_SPLIT = f'{PROJECT_ROOT}/assets/datasets/folds/UPDRS_Datasets/PD-GaM_authors_fixed.pkl'
+THREEDGAIT_6FOLD_SPLIT = f'{PROJECT_ROOT}/assets/datasets/folds/UPDRS_Datasets/3DGait_6fold_participants.pkl'
+THREEDGAIT_43FOLD_SPLIT = f'{PROJECT_ROOT}/assets/datasets/folds/UPDRS_Datasets/3DGait_43fold_participants.pkl'
 
 POSE_AND_LABEL = {
-    'BMCLABS': {
+    'BMCLab': {
         'h36m': {
             'PATH_POSES': {
                 '2D': { 
-                    'side_right': f'{PROJECT_ROOT}/datasets/BMClab/h36m/30fps/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
-                    'backright': f'{PROJECT_ROOT}/datasets/BMClab/h36m/30fps/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
+                    'side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/BMCLab/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
+                    'backright': f'{PROJECT_ROOT}/assets/datasets/h36m/BMCLab/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
                     },
                 '3D': { 
-                    'original': f'{PROJECT_ROOT}/datasets/BMClab/h36m/30fps/h36m_3d_world_30f_or_longer.npz',
-                    'preprocessed': f'{PROJECT_ROOT}/datasets/BMClab/h36m/30fps/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
-                    'camera_back': f'{PROJECT_ROOT}/datasets/BMClab/h36m/30fps/h36m_3d_world2cam_back_floorXZZplus_30f_or_longer.npz',
-                    'camera_backright': f'{PROJECT_ROOT}/datasets/BMClab/h36m/30fps/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
-                    'camera_side_right': f'{PROJECT_ROOT}/datasets/BMClab/h36m/30fps/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz',
+                    'original': f'{PROJECT_ROOT}/assets/datasets/h36m/BMCLab/h36m_3d_world_30f_or_longer.npz',
+                    'preprocessed': f'{PROJECT_ROOT}/assets/datasets/h36m/BMCLab/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
+                    'camera_back': f'{PROJECT_ROOT}/assets/datasets/h36m/BMCLab/h36m_3d_world2cam_back_floorXZZplus_30f_or_longer.npz',
+                    'camera_backright': f'{PROJECT_ROOT}/assets/datasets/h36m/BMCLab/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
+                    'camera_side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/BMCLab/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz',
                     }
                 },
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/BMClab/PDGinfo.xlsx'
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/BMCLab.pkl'
         },
         'humanML3D': {
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/BMClab/HumanML3D/HumanML3D_collected.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/BMClab/PDGinfo.xlsx'
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/HumanML3D/BMCLab/HumanML3D_collected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/BMCLab.pkl'
         },
         '6DSMPL': {
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/BMClab/6D_SMPL/30fps/6D_SMPL_30f_or_longer.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/BMClab/PDGinfo.xlsx'
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets6D_SMPL//BMCLab/6D_SMPL_30f_or_longer.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/BMCLab.pkl'
         }
     },
 
-    'TRI_PD': { 
+    'T-SDU-PD': { 
         'h36m': {
             'PATH_POSES': {
                 '2D': { 
-                    'back': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/h36m/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer_slopeCorrected.npz',
-                    'front': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/h36m/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer_slopeCorrected.npz',
-                    'side_right': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/h36m/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer_slopeCorrected.npz',
-                    'side_left': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/h36m/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer_slopeCorrected.npz',
-                    'backright': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/h36m/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer_slopeCorrected.npz',
+                    'back': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU-PD/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer_slopeCorrected.npz',
+                    'front': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU-PD/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer_slopeCorrected.npz',
+                    'side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU-PD/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer_slopeCorrected.npz',
+                    'side_left': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU-PD/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer_slopeCorrected.npz',
+                    'backright': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU-PD/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer_slopeCorrected.npz',
                     },
                 '3D': { 
-                    'original': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/h36m/h36m_3d_world_30f_or_longer_slopeCorrected.npz',
-                    'preprocessed': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/h36m/h36m_3d_world_floorXZZplus_30f_or_longer_slopeCorrected.npz',
-                    'camera_backright': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/h36m/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer_slopeCorrected.npz',
-                    'camera_side_right': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/h36m/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer_slopeCorrected.npz',
+                    'original': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU-PD/h36m_3d_world_30f_or_longer_slopeCorrected.npz',
+                    'preprocessed': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU-PD/h36m_3d_world_floorXZZplus_30f_or_longer_slopeCorrected.npz',
+                    'camera_backright': f'{PROJECT_ROOT}/assets/h36m/datasets/T-SDU-PD/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer_slopeCorrected.npz',
+                    'camera_side_right': f'{PROJECT_ROOT}/assets/h36m/datasets/T-SDU-PD/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer_slopeCorrected.npz',
                     }
             },
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/TRI_PD/ALL_PD_SCORES_AND_CLINICAL_DATA.xlsx'
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/T-SDU-PD.pkl'
         },
         'humanML3D': { 
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/HumanML3D/HumanML3D_collected.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/TRI_PD/ALL_PD_SCORES_AND_CLINICAL_DATA.xlsx'
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasetsHumanML3D//T-SDU-PD/HumanML3D_collected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/T-SDU-PD.pkl'
         },
         '6DSMPL': {
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/TRI_PD/fromWHAM/6D_SMPL/6D_SMPL_30f_or_longer_slopeCorrected.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/TRI_PD/ALL_PD_SCORES_AND_CLINICAL_DATA.xlsx'
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/6D_SMPL/T-SDU-PD/6D_SMPL_30f_or_longer_slopeCorrected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/T-SDU-PD.pkl'
         }
     },
 
-    'PDGAM': {
+    'PD-GaM': {
         'h36m': {
             'PATH_POSES': {
                 '2D': { 
-                    'back': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/h36m/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
-                    'front': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/h36m/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
-                    'side_right': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/h36m/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
-                    'side_left': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/h36m/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
-                    'backright': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/h36m/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz'
+                    'back': f'{PROJECT_ROOT}/assets/datasets/h36m/PD-GaM/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
+                    'front': f'{PROJECT_ROOT}/assets/datasets/h36m/PD-GaM/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
+                    'side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/PD-GaM/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
+                    'side_left': f'{PROJECT_ROOT}/assets/datasets/h36m/PD-GaM/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
+                    'backright': f'{PROJECT_ROOT}/assets/datasets/h36m/PD-GaM/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz'
                     },
                 '3D': { 
-                    'original': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/h36m/h36m_3d_world_30f_or_longer.npz',
-                    'preprocessed': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/h36m/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
-                    'camera_backright': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/h36m/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
-                    'camera_side_right': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/h36m/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz',
+                    'original': f'{PROJECT_ROOT}/assets/datasets/h36m/PD-GaM/h36m_3d_world_30f_or_longer.npz',
+                    'preprocessed': f'{PROJECT_ROOT}/assets/datasets/h36m/PD-GaM/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
+                    'camera_backright': f'{PROJECT_ROOT}/assets/datasets/h36m/PD-GaM/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
+                    'camera_side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/PD-GaM/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz',
                     }
                 },
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/PDGAM/PDGAM_labels.csv'
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/PD-GaM.pkl'
         },
         'humanML3D': {
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/HumanML3D/HumanML3D_collected.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/PDGAM/PDGAM_labels.csv'
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/HumanML3D/PD-GaM/HumanML3D_collected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/PD-GaM.pkl'
         },
         '6DSMPL': {
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/PDGAM/fromWHAM/6D_SMPL/6D_SMPL_30f_or_longer.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/PDGAM/PDGAM_labels.csv'
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/6D_SMPL/PD-GaM/6D_SMPL_30f_or_longer.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/PD-GaM.pkl'
         }
     },
 
-    'KIEL': {
+    '3DGait': {
         'h36m': {
             'PATH_POSES': {
                 '2D': { 
-                    'side_right': f'{PROJECT_ROOT}/datasets/Kiel/h36m/30fps/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
-                    'backright': f'{PROJECT_ROOT}/datasets/Kiel/h36m/30fps/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
+                    'back': f'{PROJECT_ROOT}/assets/datasets/h36m/3DGait/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
+                    'front': f'{PROJECT_ROOT}/assets/datasets/h36m/3DGait/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
+                    'side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/3DGait/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
+                    'side_left': f'{PROJECT_ROOT}/assets/datasets/h36m/3DGait/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
+                    'backright': f'{PROJECT_ROOT}/assets/datasets/h36m/3DGait/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
                     },
                 '3D': { 
-                    'original': f'{PROJECT_ROOT}/datasets/Kiel/h36m/30fps/h36m_3d_world_30f_or_longer.npz',
-                    'preprocessed': f'{PROJECT_ROOT}/datasets/Kiel/h36m/30fps/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
-                    'camera_backright': f'{PROJECT_ROOT}/datasets/Kiel/h36m/30fps/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
-                    'camera_side_right': f'{PROJECT_ROOT}/datasets/Kiel/h36m/30fps/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz',
+                    'original': f'{PROJECT_ROOT}/assets/datasets/h36m/3DGait/h36m_3d_world_30f_or_longer.npz',
+                    'preprocessed': f'{PROJECT_ROOT}/assets/datasets/h36m/3DGait/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
+                    'camera_backright': f'{PROJECT_ROOT}/assets/datasets/h36m/3DGait/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
+                    'camera_side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/3DGait/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz'
                     }
                 },
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/Kiel/kiel_labels.pkl'
-        },
-        'humanML3D': {
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/Kiel/HumanML3D/HumanML3D_collected.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/Kiel/kiel_labels.pkl'
-        },
-        '6DSMPL': {
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/Kiel/6D_SMPL/30fps/6D_SMPL_30f_or_longer.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/Kiel/kiel_labels.pkl'
-        }
-    },
-
-    '3DGAIT': {
-        'h36m': {
-            'PATH_POSES': {
-                '2D': { 
-                    'back': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/h36m/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
-                    'front': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/h36m/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
-                    'side_right': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/h36m/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
-                    'side_left': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/h36m/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
-                    'backright': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/h36m/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
-                    },
-                '3D': { 
-                    'original': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/h36m/h36m_3d_world_30f_or_longer.npz',
-                    'preprocessed': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/h36m/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
-                    'camera_backright': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/h36m/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
-                    'camera_side_right': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/h36m/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz'
-                    }
-                },
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/3DGait/label.xlsx'
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/3DGait.pkl'
         },
         'humanML3D': { 
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/HumanML3D/HumanML3D_collected.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/3DGait/label.xlsx'
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/HumanML3D/3DGait/HumanML3D_collected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/3DGait.pkl'
         },
         '6DSMPL': {
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/6D_SMPL/6D_SMPL_30f_or_longer.npz',
-            'PATH_LABELS': f'{PROJECT_ROOT}/datasets/3DGait/label.xlsx'
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/6D_SMPL/3DGait/6D_SMPL_30f_or_longer.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/3DGait.pkl'
         }
     },
     
-    'Emory': {
+    'E-LC': {
         'h36m': {
             'PATH_POSES': {
                 '2D': { 
-                    'back': f'{PROJECT_ROOT}/datasets/Emory/h36m/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
-                    'front': f'{PROJECT_ROOT}/datasets/Emory/h36m/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
-                    'side_right': f'{PROJECT_ROOT}/datasets/Emory/h36m/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
-                    'side_left': f'{PROJECT_ROOT}/datasets/Emory//h36m/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
-                    'backright': f'{PROJECT_ROOT}/datasets/Emory//h36m/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
+                    'back': f'{PROJECT_ROOT}/assets/datasets/h36m/E-LC/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
+                    'front': f'{PROJECT_ROOT}/assets/datasets/h36m/E-LC/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
+                    'side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/E-LC/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
+                    'side_left': f'{PROJECT_ROOT}/assets/datasets/h36m/E-LC/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
+                    'backright': f'{PROJECT_ROOT}/assets/datasets/h36m/E-LC/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
                     },
                 '3D': { 
-                    'original': f'{PROJECT_ROOT}/datasets/3DGait//h36m/h36m_3d_world_30f_or_longer.npz',
-                    'preprocessed': f'{PROJECT_ROOT}/datasets/3DGait//h36m/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
-                    'camera_backright': f'{PROJECT_ROOT}/datasets/3DGait//h36m/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
-                    'camera_side_right': f'{PROJECT_ROOT}/datasets/3DGait//h36m/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz'
+                    'original': f'{PROJECT_ROOT}/assets/datasets/h36m/E-LC/h36m_3d_world_30f_or_longer.npz',
+                    'preprocessed': f'{PROJECT_ROOT}/assets/datasets/h36m/E-LC/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
+                    'camera_backright': f'{PROJECT_ROOT}/assets/datasets/h36m/E-LC/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
+                    'camera_side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/E-LC/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz'
                     }
                 },
-            'PATH_LABELS': f''
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/E-LC.pkl'
         },
         'humanML3D': { 
-            'PATH_POSES': f'{PROJECT_ROOT}/datasets/3DGait/fromWHAM/HumanML3D/HumanML3D_collected.npz',
-            'PATH_LABELS': f''
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/HumanML3D/E-LC/HumanML3D_collected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/E-LC.pkl'
+        },
+        '6DSMPL': {
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/6D_SMPL/E-LC/6D_SMPL_30f_or_longer.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/E-LC.pkl'
         }
-    }
+    },
+    
+    'DNE': {
+        'h36m': {
+            'PATH_POSES': {
+                '2D': { 
+                    'back': f'{PROJECT_ROOT}/assets/datasets/h36m/DNE/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
+                    'front': f'{PROJECT_ROOT}/assets/datasets/h36m/DNE/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
+                    'side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/DNE/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
+                    'side_left': f'{PROJECT_ROOT}/assets/datasets/h36m/DNE/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
+                    'backright': f'{PROJECT_ROOT}/assets/datasets/h36m/DNE/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
+                    },
+                '3D': { 
+                    'original': f'{PROJECT_ROOT}/assets/datasets/h36m/DNE/h36m_3d_world_30f_or_longer.npz',
+                    'preprocessed': f'{PROJECT_ROOT}/assets/datasets/h36m/DNE/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
+                    'camera_backright': f'{PROJECT_ROOT}/assets/datasets/h36m/DNE/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
+                    'camera_side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/DNE/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz'
+                    }
+                },
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/DNE.pkl'
+        },
+        'humanML3D': { 
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/HumanML3D/DNE/HumanML3D_collected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/DNE.pkl'
+        },
+        '6DSMPL': {
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/6D_SMPL/DNE/6D_SMPL_30f_or_longer.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/DNE.pkl'
+        }
+    },
+    
+    'KUL-DT-T': {
+        'h36m': {
+            'PATH_POSES': {
+                '2D': { 
+                    'back': f'{PROJECT_ROOT}/assets/datasets/h36m/KUL-DT-T/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
+                    'front': f'{PROJECT_ROOT}/assets/datasets/h36m/KUL-DT-T/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
+                    'side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/KUL-DT-T/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
+                    'side_left': f'{PROJECT_ROOT}/assets/datasets/h36m/KUL-DT-T/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
+                    'backright': f'{PROJECT_ROOT}/assets/datasets/h36m/KUL-DT-T/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
+                    },
+                '3D': { 
+                    'original': f'{PROJECT_ROOT}/assets/datasets/h36m/KUL-DT-T/h36m_3d_world_30f_or_longer.npz',
+                    'preprocessed': f'{PROJECT_ROOT}/assets/datasets/h36m/KUL-DT-T/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
+                    'camera_backright': f'{PROJECT_ROOT}/assets/datasets/h36m/KUL-DT-T/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
+                    'camera_side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/KUL-DT-T/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz'
+                    }
+                },
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/KUL-DT-T.pkl'
+        },
+        'humanML3D': { 
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/HumanML3D/KUL-DT-T/HumanML3D_collected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/KUL-DT-T.pkl'
+        },
+        '6DSMPL': {
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/6D_SMPL/KUL-DT-T/6D_SMPL_30f_or_longer.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/KUL-DT-T.pkl'
+        }
+    },
+    
+    'T-SDU': {
+        'h36m': {
+            'PATH_POSES': {
+                '2D': { 
+                    'back': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
+                    'front': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
+                    'side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
+                    'side_left': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
+                    'backright': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
+                    },
+                '3D': { 
+                    'original': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU/h36m_3d_world_30f_or_longer.npz',
+                    'preprocessed': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
+                    'camera_backright': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
+                    'camera_side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/T-SDU/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz'
+                    }
+                },
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/T-SDU.pkl'
+        },
+        'humanML3D': { 
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/HumanML3D/T-SDU/HumanML3D_collected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/T-SDU.pkl'
+        },
+        '6DSMPL': {
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/6D_SMPL/T-SDU/6D_SMPL_30f_or_longer.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/T-SDU.pkl'
+        }
+    },
+    
+    'T-LDU': {
+        'h36m': {
+            'PATH_POSES': {
+                '2D': { 
+                    'back': f'{PROJECT_ROOT}/assets/datasets/h36m/T-LDU/h36m_3d_world2cam2img_back_floorXZZplus_30f_or_longer.npz',
+                    'front': f'{PROJECT_ROOT}/assets/datasets/h36m/T-LDU/h36m_3d_world2cam2img_front_floorXZZplus_30f_or_longer.npz',
+                    'side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/T-LDU/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz',
+                    'side_left': f'{PROJECT_ROOT}/assets/datasets/h36m/T-LDU/h36m_3d_world2cam2img_sideleft_floorXZZplus_30f_or_longer.npz',
+                    'backright': f'{PROJECT_ROOT}/assets/datasets/h36m/T-LDU/h36m_3d_world2cam2img_backright_floorXZZplus_30f_or_longer.npz',
+                    },
+                '3D': { 
+                    'original': f'{PROJECT_ROOT}/assets/datasets/h36m/T-LDU/h36m_3d_world_30f_or_longer.npz',
+                    'preprocessed': f'{PROJECT_ROOT}/assets/datasets/h36m/T-LDU/h36m_3d_world_floorXZZplus_30f_or_longer.npz',
+                    'camera_backright': f'{PROJECT_ROOT}/assets/datasets/h36m/T-LDU/h36m_3d_world2cam_backright_floorXZZplus_30f_or_longer.npz',
+                    'camera_side_right': f'{PROJECT_ROOT}/assets/datasets/h36m/T-LDU/h36m_3d_world2cam_sideright_floorXZZplus_30f_or_longer.npz'
+                    }
+                },
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/T-LDU.pkl'
+        },
+        'humanML3D': { 
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/HumanML3D/T-LDU/HumanML3D_collected.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/T-LDU.pkl'
+        },
+        '6DSMPL': {
+            'PATH_POSES': f'{PROJECT_ROOT}/assets/datasets/6D_SMPL/T-LDU/6D_SMPL_30f_or_longer.npz',
+            'PATH_LABELS': f'{PROJECT_ROOT}/assets/datasets/T-LDU.pkl'
+        }
+    },
 }
 
-PRETRAINEDD_MODEL_CHECKPOINTS_ROOT_PATH = f'{PROJECT_ROOT}/Pretrained_checkpoints'
-
-THESIS_RF = '/cluster/projects/taati/ivan/data/motion_encoders/Thesis_RF'
-FEATURES_PATH = f"{THESIS_RF}/features/features_PD_TRI_PD_PDGAM_KIEL_2024_07_31.pkl"
-FOLDS_PATH = f"{THESIS_RF}/folds/COLLECTED_FOLDS_PD_TRI_PD_PDGAM_KIEL_2024_07_31.pkl"
-HYPERPARAM_OUTPUT_RES_DIR = f"{THESIS_RF}/hypertuning_results"
+PRETRAINEDD_MODEL_CHECKPOINTS_ROOT_PATH = f'{PROJECT_ROOT}/assets/Pretrained_checkpoints'

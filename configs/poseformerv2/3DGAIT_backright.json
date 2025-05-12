@@ -1,0 +1,6 @@
+{
+    "skip": false,
+    "dataset": "3DGait",
+    "views": ["backright"],
+    "experiment_name": "Hypertune_epochs"
+}

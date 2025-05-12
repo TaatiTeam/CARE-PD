@@ -1,0 +1,6 @@
+{
+    "skip": false,
+    "dataset": "T-SDU-PD",
+    "views": ["side_right"],
+    "experiment_name": "Hypertune_epochs"
+}

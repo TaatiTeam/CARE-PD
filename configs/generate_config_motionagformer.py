@@ -7,7 +7,7 @@ from const import path
 def generate_config(param, f_name):
     data_params = {
         'skip': True,
-        'dataset': 'BMCLABS',
+        'dataset': 'BMCLab',
         'LODO': False, # When LODO is turned on training will be done on all datasets merged EXCEPT the one specified with "dataset"
         'data_type': 'h36m',
         'in_data_dim': 2,

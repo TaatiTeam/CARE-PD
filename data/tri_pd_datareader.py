@@ -6,7 +6,7 @@ from datetime import *
 
 from const.const import DATA_TYPES_WITH_PRECOMPUTED_AUGMENTATIONS
 
-class TRI_PD_Reader():
+class TSDUPD_Reader():
     """
     Reads the data from the Parkinson's Disease dataset
     """
@@ -21,10 +21,10 @@ class TRI_PD_Reader():
         self.label_df = pd.read_excel(self.labels_path)
         self.label_df = self.label_df[[self.SEQ_NAME_COLUMN, self.UPDRS_SCORE_COLUMN]]
         self.pose_dict, self.labels_dict, self.video_names, self.participant_ID, self.metadata_dict = self.read_keypoints_and_labels()
-        print(f"There are {len(self.pose_dict)} sequences in the TRI_PD dataset.")
-        print(f"There are {len(set(self.participant_ID))} different patients in the TRI_PD dataset: {set(self.participant_ID)}")
+        print(f"There are {len(self.pose_dict)} sequences in the T-SDU-PD dataset.")
+        print(f"There are {len(set(self.participant_ID))} different patients in the T-SDU-PD dataset: {set(self.participant_ID)}")
         unique, counts = np.unique(list(self.labels_dict.values()), return_counts=True)
-        print(f"Distribution of labels in TRI_PD dataset:")
+        print(f"Distribution of labels in T-SDU-PD dataset:")
         print(np.asarray((unique, counts)).T)
 
     def read_label(self, seq_name):
@@ -47,7 +47,7 @@ class TRI_PD_Reader():
         video_names_list = []
         participant_ID = []
 
-        print('[INFO - TRI_PD_Reader] Reading body keypoints from npz')
+        print('[INFO - TSDUPD_Reader] Reading body keypoints from npz')
 
         print(self.joints_path_list)
 
@@ -65,7 +65,7 @@ class TRI_PD_Reader():
                 label = self.read_label(seq_name_in_annot)
                 metadata = self.read_metadata(seq_name)
                 if joints is None:
-                    print(f"[WARN - TRI_PD_Reader] {seq_name} is None.")
+                    print(f"[WARN - TSDUPD_Reader] {seq_name} is None.")
 
                 dict_seq_name = seq_name + f'_view{view_counter}'
                 pose_dict[dict_seq_name] = joints

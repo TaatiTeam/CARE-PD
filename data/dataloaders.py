@@ -17,10 +17,9 @@ from sklearn.model_selection import StratifiedKFold, LeaveOneOut
 
 from const import path
 from const.const import DATA_TYPES_SUPPORTING_RUNTIME_TRANSFORMS, DATA_TYPES_WITH_PRECOMPUTED_AUGMENTATIONS, BACKBONES_WITH_MIRRORED_JOINTS, BLOCK_ALL_PRECOPMUTED_TRANSFORMS
-from data.bmclab_datareader import BMCLABSReader
-from data.tri_pd_datareader import TRI_PD_Reader
-from data.pdgam_datareader import PDGAMReader
-from data.kiel_datareader import KIELReader
+from data.bmclab_datareader import BMCLabReader
+from data.tri_pd_datareader import TSDUPD_Reader
+from data.pdgam_datareader import PDGaMReader
 from data.threedgait_datareader import GAIT3DReader
 from data.augmentations import MirrorReflection, RandomRotation, RandomNoise, axis_mask
 from learning.utils import compute_class_weights
@@ -175,24 +174,24 @@ class DataPreprocessor(ABC):
         folds_already_exist = os.path.exists(existing_folds_path)
 
         if not folds_already_exist:
-            if self.params['dataset'] == 'BMCLABS' and num_folds == 6:
-                cv_folds = pickle.load(open(path.VIDAS_CUSTOM_PD_6FOLD_SPLIT, "rb"))
-                print(f'Using vidas custom 6fold split for BMCLABS data {path.VIDAS_CUSTOM_PD_6FOLD_SPLIT}')
-            elif self.params['dataset'] == 'BMCLABS' and num_folds == 23:
-                cv_folds = pickle.load(open(path.VIDAS_CUSTOM_PD_23FOLD_SPLIT, "rb"))
-                print(f'Using vidas custom 23fold (LOSO) split for BMCLABS data {path.VIDAS_CUSTOM_PD_23FOLD_SPLIT}')
-            elif self.params['dataset'] == 'TRI_PD' and num_folds == 14:
-                cv_folds = pickle.load(open(path.TRI_PD_14FOLD_LOSO_SPLIT, "rb"))
-                print(f'Using 14fold (LOSO) split for TRI_PD data {path.TRI_PD_14FOLD_LOSO_SPLIT}')
-            elif self.params['dataset'] == 'PDGAM' and num_folds == 1:
-                cv_folds = pickle.load(open(path.PDGAM_AUTHORS_TRAIN_TEST_SPLIT, "rb"))
-                print(f'Using 1fold authors custom split for PDGAMM data {path.PDGAM_AUTHORS_TRAIN_TEST_SPLIT}')
-            elif self.params['dataset'] == '3DGAIT' and num_folds == 6:
+            if self.params['dataset'] == 'BMCLab' and num_folds == 6:
+                cv_folds = pickle.load(open(path.BMCLab_6FOLD_SPLIT, "rb"))
+                print(f'Using vidas custom 6fold split for BMCLab data {path.BMCLab_6FOLD_SPLIT}')
+            elif self.params['dataset'] == 'BMCLab' and num_folds == 23:
+                cv_folds = pickle.load(open(path.BMCLab_23FOLD_SPLIT, "rb"))
+                print(f'Using vidas custom 23fold (LOSO) split for BMCLab data {path.BMCLab_23FOLD_SPLIT}')
+            elif self.params['dataset'] == 'T-SDU-PD' and num_folds == 14:
+                cv_folds = pickle.load(open(path.T_SDU_PD_14FOLD_LOSO_SPLIT, "rb"))
+                print(f'Using 14fold (LOSO) split for T-SDU-PD data {path.T_SDU_PD_14FOLD_LOSO_SPLIT}')
+            elif self.params['dataset'] == 'PD-GaM' and num_folds == 1:
+                cv_folds = pickle.load(open(path.PD_GaM_AUTHORS_TRAIN_TEST_SPLIT, "rb"))
+                print(f'Using 1fold authors custom split for PD-GaMM data {path.PD_GaM_AUTHORS_TRAIN_TEST_SPLIT}')
+            elif self.params['dataset'] == '3DGait' and num_folds == 6:
                 cv_folds = pickle.load(open(path.THREEDGAIT_6FOLD_SPLIT, "rb"))
-                print(f'Using vidas custom 6fold split for BMCLABS data {path.THREEDGAIT_6FOLD_SPLIT}')
-            elif self.params['dataset'] == '3DGAIT' and num_folds == 43:
+                print(f'Using vidas custom 6fold split for BMCLab data {path.THREEDGAIT_6FOLD_SPLIT}')
+            elif self.params['dataset'] == '3DGait' and num_folds == 43:
                 cv_folds = pickle.load(open(path.THREEDGAIT_43FOLD_SPLIT, "rb"))
-                print(f'Using vidas custom 6fold split for BMCLABS data {path.THREEDGAIT_43FOLD_SPLIT}')
+                print(f'Using vidas custom 6fold split for BMCLab data {path.THREEDGAIT_43FOLD_SPLIT}')
             else:
                 cv_folds = dict()
                 print(f'Selected {dataset_name} folds do not exist.')
@@ -849,27 +848,22 @@ def dataset_factory(params, backbone, fold):
     }
 
     datareader_mapper = {
-        'BMCLABS': {
-            'h36m': BMCLABSReader,
-            'humanML3D': BMCLABSReader,
-            '6DSMPL': BMCLABSReader
+        'BMCLab': {
+            'h36m': BMCLabReader,
+            'humanML3D': BMCLabReader,
+            '6DSMPL': BMCLabReader
         },
-        'TRI_PD': {
-            'h36m': TRI_PD_Reader,
-            'humanML3D': TRI_PD_Reader,
-            '6DSMPL': TRI_PD_Reader
+        'T-SDU-PD': {
+            'h36m': TSDUPD_Reader,
+            'humanML3D': TSDUPD_Reader,
+            '6DSMPL': TSDUPD_Reader
         },
-        'PDGAM': {
-            'h36m': PDGAMReader,
-            'humanML3D': PDGAMReader,
-            '6DSMPL': PDGAMReader
+        'PD-GaM': {
+            'h36m': PDGaMReader,
+            'humanML3D': PDGaMReader,
+            '6DSMPL': PDGaMReader
         },
-        'KIEL': {
-            'h36m': KIELReader,
-            'humanML3D': KIELReader,
-            '6DSMPL': KIELReader
-        },
-        '3DGAIT': {
+        '3DGait': {
             'h36m': GAIT3DReader,
             'humanML3D': GAIT3DReader,
             '6DSMPL': GAIT3DReader
@@ -889,7 +883,7 @@ def dataset_factory(params, backbone, fold):
     assert_backbone_is_supported(backbone_data_location_mapper, backbone)
     data_dir = backbone_data_location_mapper[backbone]
 
-    if not os.path.exists(data_dir):
+    if not os.path.exists(data_dir) or not os.listdir(data_dir):
         if not params['dataset'] in datareader_mapper or \
            not params['data_type'] in datareader_mapper[params['dataset']]:
             raise NotImplementedError(f"dataset '{params['dataset']}' of type: {params['data_type']} is not supported.")

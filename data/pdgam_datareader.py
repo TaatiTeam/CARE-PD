@@ -6,9 +6,9 @@ from datetime import *
 
 from const.const import DATA_TYPES_WITH_PRECOMPUTED_AUGMENTATIONS
 
-class PDGAMReader():
+class PDGaMReader():
     """
-    Reads the data from the PDGAM dataset
+    Reads the data from the PD-GaM dataset
     """
 
     UPDRS_SCORE_COLUMN = 'UPDRS_gait_score'
@@ -20,10 +20,10 @@ class PDGAMReader():
         self.params = params
         self.label_df = pd.read_csv(self.labels_path)
         self.pose_dict, self.labels_dict, self.video_names, self.participant_ID, self.metadata_dict = self.read_keypoints_and_labels()
-        print(f"There are {len(self.pose_dict)} sequences in the PDGAM dataset.")
-        print(f"There are {len(set(self.participant_ID))} different patients in the PDGAM dataset: {set(self.participant_ID)}")
+        print(f"There are {len(self.pose_dict)} sequences in the PD-GaM dataset.")
+        print(f"There are {len(set(self.participant_ID))} different patients in the PD-GaM dataset: {set(self.participant_ID)}")
         unique, counts = np.unique(list(self.labels_dict.values()), return_counts=True)
-        print(f"Distribution of labels in PDGAM dataset:")
+        print(f"Distribution of labels in PD-GaM dataset:")
         print(np.asarray((unique, counts)).T)
     
     def extract_base_seq_name(self, seq_name):
@@ -50,7 +50,7 @@ class PDGAMReader():
         video_names_list = []
         participant_ID = []
 
-        print('[INFO - PDGAMReader] Reading body keypoints or pose from npz')
+        print('[INFO - PDGaMReader] Reading body keypoints or pose from npz')
 
         print(self.joints_path_list)
 
@@ -67,7 +67,7 @@ class PDGAMReader():
                 label = self.read_label(seq_name)
                 metadata = self.read_metadata(seq_name)
                 if joints is None:
-                    print(f"[WARN - PDGAMReader] {seq_name} is None.")
+                    print(f"[WARN - PDGaMReader] {seq_name} is None.")
 
                 dict_seq_name = seq_name + f'_view{view_counter}'
                 pose_dict[dict_seq_name] = joints
