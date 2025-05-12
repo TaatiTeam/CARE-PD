@@ -35,7 +35,7 @@ pip install torch==2.6.0+cu118 torchvision==0.21.0+cu118 --index-url https://dow
 ```
 mkdir -p assets/datasets
 ```
-Download the CARE-PD datasets from Dataverse and put them ok in the assets/datasets folder.
+Download the CARE-PD datasets from Dataverse and put them ok in the `assets/datasets` folder.
 
 ### 3️⃣ Models and Dependencies
 
