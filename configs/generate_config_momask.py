@@ -18,7 +18,7 @@ def generate_config(param, f_name):
         'model_prefix': 'momask_',
         'data_norm': None,
         'select_middle': False,
-        'humanML3D_normalization_data_path': f'{path.PROJECT_ROOT}/datasets/HumanML3D_norm_data',
+        'humanML3D_normalization_data_path': f'{path.PROJECT_ROOT}/assets/stats/HumanML3D_norm_data',
         'views': [''] # No views for 3D data
     }
     model_params = {
