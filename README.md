@@ -35,14 +35,31 @@ pip install torch==2.6.0+cu118 torchvision==0.21.0+cu118 --index-url https://dow
 ```
 mkdir -p assets/datasets
 ```
-Download the CARE-PD datasets from Dataverse and put them ok in the `assets/datasets` folder.
+Download the CARE-PD datasets from Dataverse and put them in the `assets/datasets` folder.
 
 ### 3️⃣ Models and Dependencies
 
 #### Download Pre-trained Models
 ```
-bash prepare/download_models.sh # ToDo
+bash scripts/download_models.sh
 ```
+Pretrained checkpoints will be downloaded in `assets/Pretrained_checkpoints`
+
+
+#### Preprocess Data
+##### 🔹 h36m formats
+Download preprocessed h36m formats from Dataverse  and put them in the `assets/datasets` folder.
+
+Rename the folder:
+```
+mv assets/datasets/h36m_preprocessed assets/datasets/h36m
+```
+You can also preprocess all datasets with the following command but it might takes some time:
+```
+bash scripts/preprocess_smpl2h36m.sh
+```
+
+
 </details>
 
 ## 🚀 Running code
