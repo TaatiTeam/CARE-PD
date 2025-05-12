@@ -105,6 +105,8 @@ Pretrained checkpoints will be downloaded in `assets/Pretrained_checkpoints`
 
 ### 🔍 Hyperparameter Tuning
 
+<details>
+
 You can run hyperparameter tuning on the **BMCLab** dataset across all backbone models using:
 
 ```
@@ -141,8 +143,11 @@ python run.py \
   --ntrials 5 \
   --this_run_num 0
 ```
+</details>
 
 ### 📊 Train and Evaluation
+
+<details>
 
 #### 🧪 Within-Dataset Evaluation (LOSO)
 You can run final Within-Dataset evaluation on each dataset using:
@@ -191,3 +196,5 @@ python run.py \
     "Hypertune/motionagformer_T-SDU-PD_backright/0" \
     "Hypertune/motionagformer_T-SDU-PD_sideright/0"
 ```
+
+</details>

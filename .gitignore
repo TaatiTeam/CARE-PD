@@ -1,5 +1,11 @@
 carepd/*
 .history/*
-assets/*
+assets/dataset*
+assets/Pretrain*
 *.DS_Store*
 *.pyc
+docs/._diagram.png
+reports/*
+assets/preprocessed_data/*
+experiment_outs/*
+wandb/*
