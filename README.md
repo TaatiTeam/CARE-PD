@@ -25,12 +25,17 @@ We tested our code on Python 3.9.21 and PyTorch 2.6.0
 ```
 python -m venv carepd
 source carepd/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 pip install torch==2.6.0+cu118 torchvision==0.21.0+cu118 --index-url https://download.pytorch.org/whl/cu118
 ```
 
 
 ### 2️⃣ Datasets setup
+```
+mkdir -p assets/datasets
+```
+Download the CARE-PD datasets from Dataverse and put them ok in the assets/datasets folder.
 
 ### 3️⃣ Models and Dependencies
 
