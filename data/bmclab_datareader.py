@@ -71,7 +71,7 @@ class BMCLabReader():
                 labels_dict[dict_seq_name] = label
                 metadata_dict[dict_seq_name] = None
                 video_names_list.append(dict_seq_name)
-                participant_ID.append(dict_seq_name.split("_")[0])
+                participant_ID.append(seq_name.split("__")[0])
             print(f"[INFO]: #{trimmed_counter} Trimmed sequences - IGNORED.")
             view_counter += 1
 

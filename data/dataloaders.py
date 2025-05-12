@@ -18,11 +18,12 @@ from sklearn.model_selection import StratifiedKFold, LeaveOneOut
 from const import path
 from const.const import DATA_TYPES_SUPPORTING_RUNTIME_TRANSFORMS, DATA_TYPES_WITH_PRECOMPUTED_AUGMENTATIONS, BACKBONES_WITH_MIRRORED_JOINTS, BLOCK_ALL_PRECOPMUTED_TRANSFORMS
 from data.bmclab_datareader import BMCLabReader
-from data.tri_pd_datareader import TSDUPD_Reader
+from data.tsdupd_datareader import TSDUPD_Reader
 from data.pdgam_datareader import PDGaMReader
 from data.threedgait_datareader import GAIT3DReader
 from data.augmentations import MirrorReflection, RandomRotation, RandomNoise, axis_mask
 from learning.utils import compute_class_weights
+from const.path import PROJECT_ROOT
 
 _TOTAL_SCORES = 3
 _MAJOR_JOINTS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
@@ -169,7 +170,7 @@ class DataPreprocessor(ABC):
             info['most_common_label'] = Counter(info['labels']).most_common(1)[0][0] # Returns a list of tuples [(el, freq), ...]
 
         existing_folds_name = f"{self.params['dataset']}_{num_folds}fold_participants.pkl"
-        existing_folds_path = os.path.join(Path(save_dir).parent.parent.parent.parent, 'folds', existing_folds_name)
+        existing_folds_path = os.path.join(PROJECT_ROOT, 'assets/datasets', 'folds/UPDRS_Datasets', existing_folds_name)
 
         folds_already_exist = os.path.exists(existing_folds_path)
 

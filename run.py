@@ -360,7 +360,7 @@ if __name__ == '__main__':
     parser.add_argument('--metadata', default='', type=str, help="add metadata prob to the training 'gender,age,bmi,height,weight'")
 
     args = parser.parse_args()
-
+    
     param = vars(args)
     print("\n" + "="*40)
     print("🔹 Parameters Configuration 🔹")

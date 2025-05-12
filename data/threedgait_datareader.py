@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from datetime import *
+import joblib
 
 from const.const import DATA_TYPES_WITH_PRECOMPUTED_AUGMENTATIONS
 
@@ -18,7 +19,7 @@ class GAIT3DReader():
         self.joints_path_list = joints_path_list
         self.labels_path = labels_path
         self.params = params
-        self.label_df = pd.read_excel(self.labels_path)
+        self.label_df = joblib.load(labels_path)
         self.pose_dict, self.labels_dict, self.video_names, self.participant_ID, self.metadata_dict = self.read_keypoints_and_labels()
         print(f"There are {len(self.pose_dict)} sequences in the 3dGait dataset from {len(params['views'])} views.")
         print(f"There are {len(set(self.participant_ID))} different patients in the 3dGait dataset: {set(self.participant_ID)}")
@@ -30,11 +31,9 @@ class GAIT3DReader():
         return seq_name
 
     def read_label(self, seq_name):
-        if self.params['data_type'] in DATA_TYPES_WITH_PRECOMPUTED_AUGMENTATIONS:
-            if seq_name.endswith('_M'):
-                seq_name = seq_name[:-2]
-        video_rows = self.label_df[self.label_df[self.SEQ_NAME_COLUMN] == seq_name]
-        label = video_rows[self.UPDRS_SCORE_COLUMN].values[0]
+        subject_id, walkid = seq_name.split("__")
+        walkid = walkid.split("_down")[0]
+        label = self.label_df[int(subject_id)][walkid]['UPDRS_GAIT']
         return int(label)
 
     def read_metadata(self, seq_name):
@@ -76,7 +75,7 @@ class GAIT3DReader():
                 labels_dict[dict_seq_name] = label
                 metadata_dict[dict_seq_name] = metadata
                 video_names_list.append(dict_seq_name)
-                participant_ID.append(dict_seq_name.split('_')[0][3:])
+                participant_ID.append(seq_name.split("__")[0])
             view_counter += 1
 
         return pose_dict, labels_dict, video_names_list, participant_ID, metadata_dict

@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from datetime import *
+import joblib
 
 from const.const import DATA_TYPES_WITH_PRECOMPUTED_AUGMENTATIONS
 
@@ -18,8 +19,7 @@ class TSDUPD_Reader():
         self.joints_path_list = joints_path_list
         self.labels_path = labels_path
         self.params = params
-        self.label_df = pd.read_excel(self.labels_path)
-        self.label_df = self.label_df[[self.SEQ_NAME_COLUMN, self.UPDRS_SCORE_COLUMN]]
+        self.label_df = joblib.load(labels_path)
         self.pose_dict, self.labels_dict, self.video_names, self.participant_ID, self.metadata_dict = self.read_keypoints_and_labels()
         print(f"There are {len(self.pose_dict)} sequences in the T-SDU-PD dataset.")
         print(f"There are {len(set(self.participant_ID))} different patients in the T-SDU-PD dataset: {set(self.participant_ID)}")
@@ -28,8 +28,9 @@ class TSDUPD_Reader():
         print(np.asarray((unique, counts)).T)
 
     def read_label(self, seq_name):
-        video_rows = self.label_df[self.label_df[self.SEQ_NAME_COLUMN] == seq_name]
-        label = video_rows[self.UPDRS_SCORE_COLUMN].values[0]
+        subject_id, walkid = seq_name.split("__")
+        walkid = walkid.split("_down")[0]
+        label = self.label_df[subject_id][walkid]['UPDRS_GAIT']
         return int(label)
     
     def read_metadata(self, seq_name):
@@ -70,9 +71,9 @@ class TSDUPD_Reader():
                 dict_seq_name = seq_name + f'_view{view_counter}'
                 pose_dict[dict_seq_name] = joints
                 labels_dict[dict_seq_name] = label
-                metadata_dict[dict_seq_name] = metadata
+                metadata_dict[dict_seq_name] = None
                 video_names_list.append(dict_seq_name)
-                participant_ID.append(dict_seq_name.split('ID_')[1].split('_')[0])
+                participant_ID.append(seq_name.split("__")[0])
             view_counter += 1
 
         return pose_dict, labels_dict, video_names_list, participant_ID, metadata_dict
