@@ -164,7 +164,7 @@ This script:
 
 You can also run a single dataset evaluation using:
 
-🔹 For single-view (3D) models:
+##### 🔹 For single-view (3D) models:
 
 ```
 python run.py \
@@ -176,7 +176,7 @@ python run.py \
   --num_folds -1
 ```
 
-🔹 For two-view 2D-to-3D models (combined views):
+##### 🔹 For two-view 2D-to-3D models (combined views):
 
 ```
 python run.py \
