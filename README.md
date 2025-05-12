@@ -142,6 +142,8 @@ python run.py \
   --this_run_num 0
 ```
 
+### 📊 Train and Evaluation
+
 #### 🧪 Within-Dataset Evaluation (LOSO)
 You can run final Within-Dataset evaluation on each dataset using:
 
@@ -160,12 +162,32 @@ This script:
 
 - Logs results and confusion matrices to reports/intra_eval/
 
+You can also run a single dataset evaluation using:
+
+🔹 For single-view (3D) models:
+
 ```
 python run.py \
-  --backbone motionbert \
-  --config T-SDU-PD_backright.json \
-  --hypertune 1 \
-  --tune_fresh 1 \
-  --ntrials 5 \
-  --this_run_num 0
+  --backbone motionclip \
+  --config T-SDU-PD.json \
+  --hypertune 0 \
+  --cross_dataset_test 0 \
+  --this_run_num 0 \
+  --num_folds -1
+```
+
+🔹 For two-view 2D-to-3D models (combined views):
+
+```
+python run.py \
+  --backbone motionagformer \
+  --hypertune 0 \
+  --cross_dataset_test 0 \
+  --this_run_num 0 \
+  --num_folds -1 \
+  --combine_views_preds 1 \
+  --prefer_right 1 \
+  --views_path \
+    "Hypertune/motionagformer_T-SDU-PD_backright/0" \
+    "Hypertune/motionagformer_T-SDU-PD_sideright/0"
 ```
