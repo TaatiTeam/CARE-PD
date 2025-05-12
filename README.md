@@ -7,9 +7,6 @@ CARE-PD is a benchmark dataset and evaluation suite for clinical gait analysis i
 
 ## ⚙️ Get You Ready
 
-<details>
-  
-
 
 ```
 git clone https://github.com/TaatiTeam/CARE-PD.git
@@ -100,10 +97,10 @@ Pretrained checkpoints will be downloaded in `assets/Pretrained_checkpoints`
 
 
 
-</details>
+
 
 ## 🚀 Running code
-</details>
+
 
 
 ### 🔍 Hyperparameter Tuning
