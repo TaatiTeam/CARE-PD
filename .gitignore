@@ -1,1 +1,5 @@
 carepd/*
+.history/*
+assets/*
+*.DS_Store*
+*.pyc

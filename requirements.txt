@@ -16,3 +16,5 @@ torch_dct==0.1.6
 tqdm==4.66.1
 trimesh==4.6.8
 wandb
+gdown
+chumpy
