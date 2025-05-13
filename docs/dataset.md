@@ -53,8 +53,11 @@ TO DO (VIDA Code)
 ### Data Visualization
 
 We provide utility functions for visualizing the 3D skeletal data in the repository.
+```
+python utility/viz_seqs.py -n assets/datasets/h36m/BMCLab/h36m_3d_world2cam2img_sideright_floorXZZplus_30f_or_longer.npz  -f h36m -p 2d
 
-TO DO (VIDA Code)
+python utility/viz_seqs.py -n assets/datasets/h36m/BMCLab/h36m_3d_world_floorXZZplus_30f_or_longer.npz  -f h36m
+```
 
 ## Benchmarks
 
