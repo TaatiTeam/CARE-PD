@@ -89,7 +89,33 @@ bash scripts/preprocess_smpl2sixD.sh
 
 </details>
 
-Please also check [dataset.md](docs/dataset.md) for more information.
+Please also check [dataset.md](docs/dataset.md) for more information. The dataset directory structure should look:
+```
+assets/
+└── datasets/
+    └── 6D_SMPL/
+        ├── 3DGait/
+        ├── ...
+    ├── folds/ 
+        ├── Other_Datasets/
+        ├── UPDRS_Datasets/
+    ├── h36m/ 
+        ├── 3DGait/
+        ├── ...
+    ├── HumanML3D/ 
+        ├── 3DGait/
+        ├── ...
+    ├── 3DGait.pkl 
+    ├── BMCLab.pkl
+    ├── DNE.pkl 
+    ├── E-LC.pkl 
+    ├── KUL-DT-T.pkl 
+    ├── PD-GaM.pkl 
+    ├── T-LTC.pkl 
+    ├── T-SDU-PD.pkl 
+    ├── T-SDU.pkl 
+```
+
 
 ### 3️⃣ Models and Dependencies
 
