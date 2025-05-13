@@ -3,7 +3,13 @@ CARE-PD is a benchmark dataset and evaluation suite for clinical gait analysis i
 
 ![CARE-PD Pipeline](docs/diagram.png)
 
-*Figure: Overview of the CARE-PD pipeline.*
+## Overview
+
+CARE-PD is the largest publicly available archive of 3D mesh gait data for Parkinson's Disease (PD) and the first to include data collected across multiple sites. The dataset aggregates 9 cohorts from 8 clinical sites, including 363 participants spanning a range of disease severity. All recordings—whether from RGB video or motion capture—are unified into anonymized SMPL body gait meshes through a curated harmonization pipeline.
+
+This dataset enables two main benchmarks:
+1. **Supervised clinical score prediction**: Estimating UPDRS gait scores from 3D meshes
+2. **Unsupervised motion pretext tasks**: Parkinsonian gait representation learning
 
 # ⚙️ Get You Ready
 
