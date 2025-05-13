@@ -65,7 +65,7 @@ for model_key in "${!ONE_VIEW_CONFIGS[@]}"; do
   logfile="./reports/hypertune_lodo/${timestamp}-${base_model}-${config_name}_LODO.out"
 
   echo "🔁 Epoch-tune LODO (1-view): model=$base_model config=$config_file"
-  python eval_encoder_hypertune.py \
+  python run.py \
     --backbone "$base_model" \
     --config "$config_file" \
     --ntrials 5 \
@@ -85,7 +85,7 @@ for model_config in "${TWO_VIEW_CONFIGS[@]}"; do
   logfile="./reports/hypertune_lodo/${timestamp}-${base_model}-${config_name}_LODO.out"
 
   echo "🔁 Epoch-tune LODO (2-view): model=$base_model config=$config_file"
-  python eval_encoder_hypertune.py \
+  python run.py \
     --backbone "$base_model" \
     --config "$config_file" \
     --ntrials 5 \

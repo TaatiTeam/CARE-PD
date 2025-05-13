@@ -1,7 +1,7 @@
 #!/bin/bash
 
 timestamp=$(date +%Y%m%d-%H%M%S)
-mkdir -p reports/lodo_eval
+mkdir -p reports/mida_eval
 
 # ========== One-view models ==========
 declare -A ONE_VIEW_CONFIGS
@@ -22,9 +22,9 @@ for model_key in "${!ONE_VIEW_CONFIGS[@]}"; do
   config_file="${ONE_VIEW_CONFIGS[$model_key]}"
   base_model=${model_key%%_*}
   config_name=$(basename "$config_file" .json)
-  logfile="./reports/lodo_eval/${timestamp}-${base_model}-${config_name}_LODO_cross.out"
+  logfile="./reports/mida_eval/${timestamp}-${base_model}-${config_name}.out"
 
-  echo "🌐 LODO eval (1-view): model=$base_model config=$config_file"
+  echo "🌐 MIDA eval (1-view): model=$base_model config=$config_file"
   python run.py \
     --backbone "$base_model" \
     --config "$config_file" \
@@ -32,6 +32,8 @@ for model_key in "${!ONE_VIEW_CONFIGS[@]}"; do
     --hypertune 0 \
     --cross_dataset_test 1 \
     --force_LODO 1 \
+    --AID 1 \
+    --num_folds -1 \
     --exp_name_rigid LODO &> "$logfile"
 done
 
@@ -58,14 +60,16 @@ TWO_VIEW_MODELS=(
 for model_dataset in "${TWO_VIEW_MODELS[@]}"; do
   base_model=${model_dataset%%_*}
   dataset_name=${model_dataset#*_}
-  logfile="./reports/lodo_eval/${timestamp}-${base_model}-${dataset_name}_LODO_cross_combined.out"
+  logfile="./reports/mida_eval/${timestamp}-${base_model}-${dataset_name}_combined.out"
 
-  echo "🌐 LODO eval (2-view): model=$base_model dataset=$dataset_name"
+  echo "🌐 MIDA eval (2-view): model=$base_model dataset=$dataset_name"
   python run.py \
     --backbone "$base_model" \
     --hypertune 0 \
     --cross_dataset_test 1 \
     --force_LODO 1 \
+    --AID 1 \
+    --num_folds -1 \
     --exp_name_rigid LODO \
     --combine_views_preds 1 \
     --views_path \
@@ -73,4 +77,4 @@ for model_dataset in "${TWO_VIEW_MODELS[@]}"; do
       "LODO/${base_model}_${dataset_name}_sideright_LODO/0" &> "$logfile"
 done
 
-echo "✅ LODO cross-dataset evaluations complete."
+echo "✅ MIDA evaluations complete."

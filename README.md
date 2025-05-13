@@ -281,7 +281,7 @@ python run.py \
 ```
 MODELNAME in (potr, momask, motionclip, motionbert, mixste, poseformerv2, motionagformer).
 
-#### LODO Evaluation
+#### 📊 LODO Evaluation
 
 In this step, we evaluate how well each model generalizes **across datasets** when trained using a **Leave-One-Dataset-Out (LODO)** strategy.
 
@@ -294,7 +294,7 @@ To run all LODO evaluation jobs:
 ```
 bash scripts/eval_lodo.sh
 ```
-All logs and results are saved in: `reports/lodo_eval/`
+All logs are saved in: `reports/lodo_eval/`
 To evaluate on a single model and dataset use:
 
 ##### 🔹 For single-view (3D) models:
@@ -325,6 +325,62 @@ python run.py \
     "LODO/MODELNAME_CONFIGNAME_sideright_LODO/0"
 ```
 MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
+
+</details>
+
+### 🧬 MIDA Evaluation
+<details>
+
+The final evaluation step uses **Multi-dataset In-domain Adaptation** training under a **LOSO** setup.
+
+Each model is:
+
+- Trained on all datasets, plus the **training portion** of the in domain dataset
+- Evaluated on the **test portion only**
+- Configured with `--AID 1`, `--force_LODO 1`, and `--num_folds -1` to reflect this setup
+
+To run all MIDA evaluations:
+
+```
+bash scripts/eval_mida.sh
+```
+
+All logs are stored under: `reports/mida_eval`
+To evaluate on a single model and dataset use:
+
+##### 🔹 For single-view (3D) models:
+```
+python run.py \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
+  --this_run_num 0 \
+  --hypertune 0 \
+  --cross_dataset_test 1 \
+  --force_LODO 1 \
+  --AID 1 \
+  --num_folds -1 \
+  --exp_name_rigid LODO
+```
+MODELNAME in (potr, momask, motionclip).
+
+##### 🔹 For two-view 2D-to-3D models (combined views):
+
+```
+python run.py \
+  --backbone MODELNAME \
+  --hypertune 0 \
+  --cross_dataset_test 1 \
+  --force_LODO 1 \
+  --AID 1 \
+  --num_folds -1 \
+  --exp_name_rigid LODO \
+  --combine_views_preds 1 \
+  --views_path \
+    "LODO/MODELNAME_CONFIGNAME_backright_LODO/0" \
+    "LODO/MODELNAME_CONFIGNAME_sideright_LODO/0"
+```
+MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
+
 
 </details>
 
