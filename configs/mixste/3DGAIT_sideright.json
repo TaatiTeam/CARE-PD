@@ -2,5 +2,5 @@
     "skip": false,
     "dataset": "3DGait",
     "views": ["side_right"],
-    "experiment_name": "Hypertune_epochs"
+    "experiment_name": "Hypertune"
 }

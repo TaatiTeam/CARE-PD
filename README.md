@@ -117,8 +117,8 @@ You can also run a single tuning job manually like this:
 
 ```
 python eval_encoder_hypertune.py \
-  --backbone motionbert \
-  --config BMCLab_backright.json \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
   --hypertune 1 \
   --tune_fresh 1 \
   --this_run_num 0 \
@@ -136,8 +136,8 @@ You can also run a single dataset tuning job like:
 
 ```
 python run.py \
-  --backbone motionbert \
-  --config T-SDU-PD_backright.json \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
   --hypertune 1 \
   --tune_fresh 1 \
   --ntrials 5 \
@@ -158,14 +158,10 @@ bash scripts/eval_within_dataset.sh
 This script:
 
  - Loads the best hyperparameters from each study
-
-- Retrains the model from scratch on the full training folds
-
-- Evaluates performance in a LOSO setup
-
-- Automatically combines predictions from back and side views (for multi-view models)
-
-- Logs results and confusion matrices to reports/intra_eval/
+ - Retrains the model from scratch on the full training folds
+ - Evaluates performance in a LOSO setup
+ - Automatically combines predictions from back and side views (for multi-view models)
+ - Logs results and confusion matrices to `reports/intra_eval/`
 
 You can also run a single dataset evaluation using:
 
@@ -173,19 +169,20 @@ You can also run a single dataset evaluation using:
 
 ```
 python run.py \
-  --backbone motionclip \
-  --config T-SDU-PD.json \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
   --hypertune 0 \
   --cross_dataset_test 0 \
   --this_run_num 0 \
   --num_folds -1
 ```
+MODELNAME in (potr, momask, motionclip).
 
 ##### 🔹 For two-view 2D-to-3D models (combined views):
 
 ```
 python run.py \
-  --backbone motionagformer \
+  --backbone MODELNAME \
   --hypertune 0 \
   --cross_dataset_test 0 \
   --this_run_num 0 \
@@ -193,8 +190,57 @@ python run.py \
   --combine_views_preds 1 \
   --prefer_right 1 \
   --views_path \
-    "Hypertune/motionagformer_T-SDU-PD_backright/0" \
-    "Hypertune/motionagformer_T-SDU-PD_sideright/0"
+    "Hypertune/MODELNAME_CONFIGNAME_backright/0" \
+    "Hypertune/MODELNAME_CONFIGNAME_sideright/0"
 ```
+MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
+
+### 🌍 Cross-Dataset Evaluation
+
+After within-dataset testing, you can evaluate how well each model generalizes across datasets.
+
+To run all cross-dataset experiments:
+
+```
+bash scripts/eval_cross_dataset.sh
+```
+
+This script:
+
+  - Loads the best hyperparameters from each model's tuning run
+  - Trains each model on its original dataset
+  - Tests on all other datasets (automatically handled in code)
+  - Combines predictions from multiple views for multi-view models
+  - Logs all outputs to reports/cross_eval/
+
+
+
+To evaluate on a single model and dataset use:
+
+##### 🔹 For single-view (3D) models:
+```
+python run.py \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
+  --hypertune 0 \
+  --cross_dataset_test 1 \
+  --this_run_num 0
+```
+MODELNAME in (potr, momask, motionclip).
+
+##### 🔹 For two-view 2D-to-3D models (combined views):
+
+```
+python run.py \
+  --backbone MODELNAME \
+  --hypertune 0 \
+  --cross_dataset_test 1 \
+  --combine_views_preds 1 \
+  --prefer_right 1 \
+  --views_path \
+    "Hypertune/MODELNAME_CONFIGNAME_backright/0" \
+    "Hypertune/MODELNAME_CONFIGNAME_sideright/0"
+```
+MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
 
 </details>
