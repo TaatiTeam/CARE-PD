@@ -12,7 +12,7 @@ This dataset enables two main benchmarks:
 2. **Unsupervised motion pretext tasks**: Parkinsonian gait representation learning
 
 # ⚙️ Get You Ready
-
+<details>
 
 ```
 git clone https://github.com/TaatiTeam/CARE-PD.git
@@ -100,7 +100,7 @@ bash scripts/download_models.sh
 Pretrained checkpoints will be downloaded in `assets/Pretrained_checkpoints`
 
 
-
+</details>
 
 
 
