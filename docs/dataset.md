@@ -58,6 +58,7 @@ python utility/viz_seqs.py -n assets/datasets/h36m/BMCLab/h36m_3d_world2cam2img_
 
 python utility/viz_seqs.py -n assets/datasets/h36m/BMCLab/h36m_3d_world_floorXZZplus_30f_or_longer.npz  -f h36m
 ```
+You can refer to the motion-latent-diffusion (MLD) repository ([link](https://github.com/ChenFengYe/motion-latent-diffusion)) for code for rendering SMPL.
 
 ## Benchmarks
 
