@@ -149,7 +149,9 @@ python run.py \
 
 <details>
 
-#### 🧪 Within-Dataset Evaluation (LOSO)
+### 🧪 Within-Dataset Evaluation (LOSO)
+<details>
+
 You can run final Within-Dataset evaluation on each dataset using:
 
 ```
@@ -194,8 +196,10 @@ python run.py \
     "Hypertune/MODELNAME_CONFIGNAME_sideright/0"
 ```
 MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
+</details>
 
 ### 🌍 Cross-Dataset Evaluation
+<details>
 
 After within-dataset testing, you can evaluate how well each model generalizes across datasets.
 
@@ -242,5 +246,43 @@ python run.py \
     "Hypertune/MODELNAME_CONFIGNAME_sideright/0"
 ```
 MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
+</details>
+
+### 🧪 Leave One Dataset Out Evaluation (LODO)
+
+<details>
+
+#### 🔁 LODO Epoch Tuning
+For Leave-One-Dataset-Out (LODO) evaluation, we first tune the number of training epochs on each dataset **excluding** the target dataset (i.e., LODO setup).
+
+To run all epoch-tuning jobs for LODO:
+
+```
+bash scripts/hypertune_lodo_epochs.sh
+```
+This script:
+  - Tunes the number of epochs per dataset used in LODO training
+  - Forces LODO=True using --force_LODO 1
+  - Uses --exp_name_rigid LODO to name all output folders consistently
+  - Logs all runs to reports/hypertune_lodo/
+
+To evaluate on a single model and dataset use:
+
+```
+python run.py \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
+  --ntrials 5 \
+  --this_run_num 0 \
+  --hypertune 1 \
+  --tune_fresh 1 \
+  --force_LODO 1 \
+  --exp_name_rigid LODO
+```
+MODELNAME in (potr, momask, motionclip, motionbert, mixste, poseformerv2, motionagformer).
+
+
+
+</details>
 
 </details>
