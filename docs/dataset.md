@@ -93,19 +93,3 @@ By accessing and using this database (the "Database"), users ("Users") acknowled
 
 By using the Database, Users expressly acknowledge and agree to abide by these Terms of Use.
 
-## Citation
-
-If you use CARE-PD in your research, please cite:
-
-```
-[Citation information to be provided upon publication]
-```
-
-## Acknowledgments
-
-We thank all participating research institutions and subjects who made this dataset possible.
-
-## Contact
-
-For questions, issues, or additional information, please contact:
-[Contact information to be provided]

@@ -393,5 +393,15 @@ MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
 </details>
 
 ## Acknowledgement 🙏
-We sincerely thank the open-sourcing of these works where some of our code is based on:
+We sincerely thank all participating research institutions and subjects who made this dataset possible.
+We also thank the open-sourcing of these works where some of our code is based on:
 [HumanML3D](https://github.com/EricGuo5513/HumanML3D), [joints2smpl](https://github.com/wangsen1312/joints2smpl), [MoMask](https://github.com/EricGuo5513/momask-codes), [MotionBert](https://github.com/Walter0807/MotionBERT), [MotionBert](https://github.com/TaatiTeam/MotionAGFormer), [MotionCLIP](https://github.com/GuyTevet/MotionCLIP), [PoserFormerV2](https://github.com/QitaoZhao/PoseFormerV2), [POTR](https://github.com/idiap/potr), [MixSTE](https://github.com/JinluZhang1126/MixSTE)
+
+## Citation
+
+If you use CARE-PD in your research, please cite:
+
+```
+[Citation information to be provided upon publication]
+```
+
