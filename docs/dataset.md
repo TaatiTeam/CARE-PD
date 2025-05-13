@@ -48,7 +48,7 @@ Each dataset is provided in a standardized format:
 
 We provide utility functions for loading the 3D skeletal data in the repository.
 
-TO DO (VIDA Code)
+Please refer to the dataset setup detail in [README.md](README.md).
 
 ### Data Visualization
 
