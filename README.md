@@ -1,5 +1,5 @@
 # CARE-PD
-CARE-PD is a benchmark dataset and evaluation suite for clinical gait analysis in Parkinson’s Disease, released as part of NeurIPS 2025 Datasets & Benchmarks Track submission.
+CARE-PD is a dataset and evaluation benchmark suite for clinical gait analysis in Parkinson’s Disease, released as part of NeurIPS 2025 Datasets & Benchmarks Track submission.
 
 ![CARE-PD Pipeline](docs/diagram.png)
 
