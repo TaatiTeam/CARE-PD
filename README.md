@@ -215,7 +215,7 @@ This script:
   - Trains each model on its original dataset
   - Tests on all other datasets (automatically handled in code)
   - Combines predictions from multiple views for multi-view models
-  - Logs all outputs to reports/cross_eval/
+  - Logs all outputs to `reports/cross_eval/`
 
 
 
@@ -248,7 +248,7 @@ python run.py \
 MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
 </details>
 
-### 🧪 Leave One Dataset Out Evaluation (LODO)
+### 🌐 Leave One Dataset Out Evaluation (LODO)
 
 <details>
 
@@ -264,7 +264,7 @@ This script:
   - Tunes the number of epochs per dataset used in LODO training
   - Forces LODO=True using --force_LODO 1
   - Uses --exp_name_rigid LODO to name all output folders consistently
-  - Logs all runs to reports/hypertune_lodo/
+  - Logs all runs to `reports/hypertune_lodo/`
 
 To evaluate on a single model and dataset use:
 
@@ -281,7 +281,50 @@ python run.py \
 ```
 MODELNAME in (potr, momask, motionclip, motionbert, mixste, poseformerv2, motionagformer).
 
+#### LODO Evaluation
 
+In this step, we evaluate how well each model generalizes **across datasets** when trained using a **Leave-One-Dataset-Out (LODO)** strategy.
+
+Each model is:
+  - Trained on all datasets **except** the target
+  - Evaluated only on the left-out dataset
+
+To run all LODO evaluation jobs:
+
+```
+bash scripts/eval_lodo.sh
+```
+All logs and results are saved in: `reports/lodo_eval/`
+To evaluate on a single model and dataset use:
+
+##### 🔹 For single-view (3D) models:
+```
+python run.py \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
+  --this_run_num 0 \
+  --hypertune 0 \
+  --cross_dataset_test 1 \
+  --force_LODO 1 \
+  --exp_name_rigid LODO
+```
+MODELNAME in (potr, momask, motionclip).
+
+##### 🔹 For two-view 2D-to-3D models (combined views):
+
+```
+python run.py \
+  --backbone MODELNAME \
+  --hypertune 0 \
+  --cross_dataset_test 1 \
+  --force_LODO 1 \
+  --exp_name_rigid LODO \
+  --combine_views_preds 1 \
+  --views_path \
+    "LODO/MODELNAME_CONFIGNAME_backright_LODO/0" \
+    "LODO/MODELNAME_CONFIGNAME_sideright_LODO/0"
+```
+MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
 
 </details>
 
