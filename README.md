@@ -5,7 +5,7 @@ CARE-PD is a benchmark dataset and evaluation suite for clinical gait analysis i
 
 *Figure: Overview of the CARE-PD pipeline.*
 
-## ⚙️ Get You Ready
+# ⚙️ Get You Ready
 
 
 ```
@@ -99,7 +99,7 @@ Pretrained checkpoints will be downloaded in `assets/Pretrained_checkpoints`
 
 
 
-## 🚀 Running code
+# 🚀 Running code
 
 
 
