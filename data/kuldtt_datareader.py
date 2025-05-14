@@ -7,7 +7,7 @@ from datetime import *
 
 from const.const import DATA_TYPES_WITH_PRECOMPUTED_AUGMENTATIONS
 
-class BMCLabReader():
+class KULDTTReader():
     """
     Reads the data from the Parkinson's Disease dataset
     """
@@ -17,26 +17,21 @@ class BMCLabReader():
         self.labels_path = labels_path
         self.params = params
         self.label_df = joblib.load(labels_path)
-        self.pose_dict, self.labels_dict, self.video_names, self.participant_ID, self.metadata_dict, self.medication_dict, self.FoG_labels_dict = self.read_keypoints_and_labels()
-        print(f"There are {len(self.pose_dict)} sequences in the BMCLab dataset.")
-        print(f"There are {len(set(self.participant_ID))} different patients in the BMCLab dataset: {set(self.participant_ID)}")
-        unique, counts = np.unique(list(self.labels_dict.values()), return_counts=True)
-        print(f"Distribution of labels in BMCLab dataset:")
+        self.pose_dict, self.FoG_labels_dict, self.video_names, self.participant_ID, self.metadata_dict = self.read_keypoints_and_labels()
+        print(f"There are {len(self.pose_dict)} sequences in the E-LC dataset.")
+        print(f"There are {len(set(self.participant_ID))} different patients in the E-LC dataset: {set(self.participant_ID)}")
+        unique, counts = np.unique(list(self.FoG_labels_dict.values()), return_counts=True)
+        print(f"Distribution of FoG labels in E-LC dataset:")
         print(np.asarray((unique, counts)).T)
         unique, counts = np.unique(list(self.medication_dict.values()), return_counts=True)
-        print(f"Distribution of medications in BMCLab dataset:")
-        print(np.asarray((unique, counts)).T)
-        unique, counts = np.unique(list(self.FoG_labels_dict.values()), return_counts=True)
-        print(f"Distribution of FoG status in BMCLab dataset:")
+        print(f"Distribution of medications in E-LC dataset:")
         print(np.asarray((unique, counts)).T)
 
     def read_label(self, seq_name):
         subject_id, walkid = seq_name.split("__")
         walkid = walkid.split("_down")[0]
-        label = self.label_df[subject_id][walkid]['UPDRS_GAIT']
-        med_stat = self.label_df[subject_id][walkid]['medication']
         FoG = self.label_df[subject_id][walkid]['other']
-        return int(label), med_stat, FoG
+        return FoG
     
     def read_keypoints_and_labels(self):
         """
@@ -46,12 +41,11 @@ class BMCLabReader():
         pose_dict = {}
         labels_dict = {}
         metadata_dict = {}
-        fog_dict = {} 
         medication_dict = {}
         video_names_list = []
         participant_ID = []
 
-        print('[INFO - PDReader] Reading body keypoints or pose from npz')
+        print('[INFO - E-LCReader] Reading body keypoints or pose from npz')
 
         print(self.joints_path_list)
 
@@ -69,19 +63,17 @@ class BMCLabReader():
                         joints = np.expand_dims(joints, axis=0)
                     else:
                         joints = joints[:1, ...]
-                label, med, FoG = self.read_label(seq_name)
+                FoG_label = self.read_label(seq_name)
                 if joints is None:
-                    print(f"[WARN - PDReader] {seq_name} is None.")
+                    print(f"[WARN - E-LCReader] {seq_name} is None.")
 
                 dict_seq_name = seq_name + f'_view{view_counter}'
                 pose_dict[dict_seq_name] = joints
-                labels_dict[dict_seq_name] = label
-                medication_dict[dict_seq_name] = med
-                fog_dict[dict_seq_name] = FoG
+                labels_dict[dict_seq_name] = FoG_label
                 metadata_dict[dict_seq_name] = None
                 video_names_list.append(dict_seq_name)
                 participant_ID.append(seq_name.split("__")[0])
             print(f"[INFO]: #{trimmed_counter} Trimmed sequences - IGNORED.")
             view_counter += 1
 
-        return pose_dict, labels_dict, video_names_list, participant_ID, metadata_dict, medication_dict, fog_dict
+        return pose_dict, labels_dict, video_names_list, participant_ID
