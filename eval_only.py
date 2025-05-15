@@ -115,183 +115,6 @@ def load_hyperparams_from_study(params, backbone_name, exp_path, fallback_json_p
     return params, best_params
 
 
-def objective_hyperparam_opt_CV(trial, splits, backbone_name, run_name, params, search_space_key):
-    if 'motionbertlite' in params['model_checkpoint_path']:  search_space_key = 'motionbertlite'
-    search_space = const.MODEL_HYPERTUNING_CHOICES[params['train_mode']]
-    for key in search_space_key:
-        search_space = search_space[key]
-    classifier_hidden_dims_choices = search_space['classifier_hidden_dims']
-    classifier_op = list(classifier_hidden_dims_choices.keys())
-
-    # Only tune epochs if not BMCLab
-    if params['dataset'] != const.DATASET_FOR_TUNING[params['train_mode']] or params['LODO']: # only do epoch tunning
-        epochs = trial.suggest_categorical('epochs', search_space['epochs'])
-        params['epochs'] = epochs
-        # Other hyperparams: use fixed values from search_space
-        params['lr_head'] = search_space['lr'][0]
-        params['lr_backbone'] = search_space.get('lr_backbone', [params['lr_backbone']])[0]
-        params['batch_size'] = search_space['batch_size'][0]
-        params['optimizer'] = search_space['optimizer'][0]
-        params['lambda_l1'] = search_space['lambda_l1'][0]
-        params['classifier_dropout'] = search_space['dropout_rate'][0]
-        params['criterion'] = search_space['criterion'][0]
-        chosen_option = list(search_space['classifier_hidden_dims'].keys())[0]
-        params['classifier_hidden_dims'] = search_space['classifier_hidden_dims'][chosen_option]
-        if params['criterion'] == 'FocalLoss':
-            params['alpha'] = search_space['alpha'][0]
-            params['gamma'] = search_space['gamma'][0]
-        if params['optimizer'] in ['AdamW', 'Adam', 'RMSprop', 'SGD']:
-            params['weight_decay'] = search_space['weight_decay'][0]
-            if 'weight_decay_backbone' in search_space:
-                params['weight_decay_backbone'] = search_space['weight_decay_backbone'][0]
-        fixed_param_mapping = {
-                'lr_head': 'lr',
-                'lr_backbone': 'lr_backbone',
-                'batch_size': 'batch_size',
-                'optimizer': 'optimizer',
-                'lambda_l1': 'lambda_l1',
-                'classifier_dropout': 'dropout_rate',
-                'criterion': 'criterion',
-                'classifier_hidden_dims': 'classifier_hidden_dims'
-            }
-        for internal_key, external_key in fixed_param_mapping.items():
-            if internal_key in params:
-                trial.set_user_attr(external_key, params[internal_key])
-        # Log alpha and gamma if using FocalLoss
-        if params['criterion'] == 'FocalLoss':
-            trial.set_user_attr('alpha', params['alpha'])
-            trial.set_user_attr('gamma', params['gamma'])
-        if 'weight_decay' in params:
-            trial.set_user_attr('weight_decay', params['weight_decay'])
-        if 'weight_decay_backbone' in params:
-            trial.set_user_attr('weight_decay_backbone', params['weight_decay_backbone'])
-
-    else:
-        # If BMCLab full search space is needed
-        epochs = trial.suggest_categorical('epochs', search_space['epochs']) 
-        lr = trial.suggest_categorical('lr', search_space['lr'])
-        lr_backbone = trial.suggest_categorical('lr_backbone', search_space.get('lr_backbone', [params['lr_backbone']]))
-        batch_size = trial.suggest_categorical('batch_size', search_space['batch_size'])
-        optimizer_name = trial.suggest_categorical('optimizer', search_space['optimizer'])
-        lambda_l1 = trial.suggest_categorical('lambda_l1', search_space['lambda_l1']) #[0, 0.0001, 0.001] # Try this also
-        dropout_rate = trial.suggest_categorical('dropout_rate', search_space['dropout_rate'])
-        criterion = trial.suggest_categorical('criterion', search_space['criterion']) 
-        chosen_option  = trial.suggest_categorical('classifier_hidden_dims', classifier_op) 
-        classifier_hidden_dims = classifier_hidden_dims_choices[chosen_option]
-        
-        params['classifier_dropout'] = dropout_rate
-        params['classifier_hidden_dims'] = classifier_hidden_dims
-        params['batch_size'] = batch_size
-        params['optimizer'] = optimizer_name
-        params['lr_head'] = lr
-        params['lr_backbone'] = lr_backbone
-        params['epochs'] = epochs
-        params['lambda_l1'] = lambda_l1
-        params['criterion'] = criterion
-        
-        if params['criterion'] == 'FocalLoss':
-            params['alpha'] = trial.suggest_categorical('alpha', search_space['alpha'])
-            params['gamma'] = trial.suggest_categorical('gamma', search_space['gamma'])
-            # a_min, a_max = search_space['alpha']
-            # g_min, g_max = search_space['gamma']
-            # params['alpha'] = trial.suggest_float('alpha', a_min, a_max)
-            # params['gamma'] = trial.suggest_float('gamma', g_min, g_max)
-            
-        if params['optimizer'] in ['AdamW', 'Adam', 'RMSprop', 'SGD']:
-            params['weight_decay'] = trial.suggest_categorical('weight_decay', search_space['weight_decay'])
-            if 'weight_decay_backbone' in search_space:
-                params['weight_decay_backbone'] = trial.suggest_categorical('weight_decay_backbone', search_space['weight_decay_backbone'])
-    
-    print("========================================================================================")
-    print("========================================================================================")
-    print(f"⭐️ Trial {trial.number}/{params['trials_left_to_do']} ⭐️: epochs: {epochs}, batch_size: {params['batch_size']}")
-    print(f"Backbone: {backbone_name}, dataset: {params['dataset']}")
-    print(f"optimizer_name: {params['optimizer']}, weight_decay:{params['weight_decay']}")
-    print(f"lr_head: {params['lr_head']}, lr_backbone: {params['lr_backbone']}")
-    print(f"criterion: {params['criterion']}")
-    if params['criterion'] == 'FocalLoss': print(f"alpha: {params['alpha']}, gamma: {params['gamma']}")
-    if params['train_mode'] == 'end2end': print(f"weight_decay_backbone:{params['weight_decay_backbone']}")
-    print("========================================================================================")
-    print("========================================================================================")
-    tags = [
-        f'{backbone_name}',
-        f"trial:{format(trial.number, '05d')}",
-        f"dataset:{params['dataset']}",
-        f"train_mode:{params['train_mode']}",
-        f"num_folds:{params['num_folds']}",
-        f"run_num:{params['this_run_num']}",
-        f"LODO:{params['LODO']}",
-        f"hypertune:{params['hypertune']}",
-        f"configname:{params['configname_thisrunnum'].split('_run')[0]}",
-    ]
-    wandb.init(project='MotionEncoderEvaluator', 
-            group=params['experiment_name'], 
-            job_type='hyperparam_trial', 
-            name=f"{backbone_name}_{params['dataset']}{'LODO' if params['LODO'] else ''}_{params['configname_thisrunnum']}_{format(trial.number, '05d')}",
-            tags=tags,
-            reinit=True)
-    
-    val_f1_scores_all_folds = []  # Aggregate validation F1 score across all folds
-    for fold, (train_dataset, eval_dataset) in enumerate(splits, start=1):
-        train_dataset_fn, eval_dataset_fn, class_weights = dataloader_factory(params, train_dataset, eval_dataset)
-        start_time = datetime.datetime.now()
-
-        model_backbone = load_pretrained_backbone(params, backbone_name)
-        model = MotionEncoder(backbone=model_backbone,
-                                params=params,
-                                num_classes=params['num_classes'],
-                                train_mode=params['train_mode'])
-        model = model.to(_DEVICE)
-        if torch.cuda.device_count() > 1:
-            print("Using", torch.cuda.device_count(), "GPUs!")
-            model = nn.DataParallel(model)
-            
-        if fold == 1:
-            model_params = count_parameters(model)
-            print(f"[INFO] Model has {model_params} parameters.")
-        
-        _, _, best_val_cfm, all_val_f1 = train_model(params, class_weights, train_dataset_fn, eval_dataset_fn, model, fold, backbone_name, mode="HYPERTUNE")
-
-        _, _, _, cfm_train = validate_model(model, train_dataset_fn, params, class_weights)
-        log_cfm_to_wandb(best_val_cfm, fold, params['num_classes'], kind='val')
-        log_cfm_to_wandb(cfm_train, fold, params['num_classes'], kind='train')
-
-        # all_val_f1 = [f1_epoch1, f1_epoch2, ..., f1_epochN]
-        # val_f1_scores_all_folds: list of those all_val_f1 lists, one per fold
-        val_f1_scores_all_folds.append(all_val_f1)
-        end_time = datetime.datetime.now()
-        
-        duration = end_time - start_time
-        print(f"Fold {fold} run time:", duration)
-        torch.cuda.empty_cache()
-
-    # Compute average performance across all folds
-    # 1. Initialize with average F1 at epoch 0 across all folds
-    best_avg_val_f1 = np.mean([f1_scores[0] for f1_scores in val_f1_scores_all_folds])
-    best_epoch = 0
-    # 2. Go through every later epoch and check if its average F1 is better
-    for epoch in range(1, len(val_f1_scores_all_folds[0])):
-        avg_f1 = np.mean([f1_scores[epoch] for f1_scores in val_f1_scores_all_folds])
-        if avg_f1 > best_avg_val_f1:
-            best_avg_val_f1 = avg_f1
-            best_epoch = epoch
-
-    trial.set_user_attr("avg_best_epoch", best_epoch)
-    print(f"Trial {trial.number}, avg_best_epoch: {best_epoch}")
-    trial.set_user_attr("val_f1_scores_all_folds", val_f1_scores_all_folds)
-    trial.set_user_attr("best_val_f1", best_avg_val_f1)
-
-    wandb.log({
-            f'final/best_avg_val_f1': best_avg_val_f1,
-            f'final/avg_best_epoch': best_epoch
-        })
-
-    wandb.config.update(params)
-    wandb.config.update({'trial_name': f"{backbone_name}_{params['dataset']}{'LODO' if params['LODO'] else ''}_{format(trial.number, '05d')}"})
-    wandb.finish()
-    
-    return best_avg_val_f1
-
 def get_train_and_eval_datasets_depending_on_LODO(params, backbone_name, fold, augmented_datasets=False):
     if not params['LODO']:
         train_dataset, eval_dataset = dataset_factory(params, backbone_name, fold)
@@ -345,7 +168,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--medication', default=0, type=int, help='add medication prob to the training [0 or 1]')
     parser.add_argument('--metadata', default='', type=str, help="add metadata prob to the training 'gender,age,bmi,height,weight'")
-    parser.add_argument('--tuned_model_config', type=str, default=None, help='Path to a JSON file containing best hyperparameters if no study.pkl is found.')
+    parser.add_argument('--tuned_config', type=str, default=None, help='Path to a JSON file containing best hyperparameters if no study.pkl is found.')
 
 
     args = parser.parse_args()
@@ -416,10 +239,7 @@ if __name__ == '__main__':
         all_folds = range(1, params['num_folds'] + 1)
         set_random_seed(param['seed'])
         
-        if param['hypertune'] and not param['just_gen_dataset']: 
-            EXP = 'perform_hypertunning' 
-            assert param['combine_views_preds'] == 0, "Hypertuning is not supported with --combine_views_preds. Please set it to 0."
-        elif not param['hypertune'] and not param['cross_dataset_test'] and not param['just_gen_dataset']: 
+        if not param['hypertune'] and not param['cross_dataset_test'] and not param['just_gen_dataset']: 
             EXP = 'perform_intra_dataset_test'
         elif not param['hypertune'] and param['cross_dataset_test'] and not params['LODO'] and not param['just_gen_dataset']:
             EXP = 'perform_cross_dataset_test'     
@@ -429,107 +249,11 @@ if __name__ == '__main__':
             EXP = 'perform_cross_dataset_test_AID'
         
 
-        # == Hypertuning ==
-        if  EXP == 'perform_hypertunning':
-            this_run_num = param['this_run_num']
-            utils.create_dir_tree2(os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix']), this_run_num)
-            params['model_prefix'] = params['model_prefix'] + '/' + str(this_run_num)
-
-            splits = []
-            for fold in all_folds:
-                train_dataset, eval_dataset = get_train_and_eval_datasets_depending_on_LODO(params, backbone_name, fold)
-                splits.append((train_dataset, eval_dataset))
-            
-            print("🔹 Hypertuning space 🔹")
-            print("="*40)
-            if params['dataset'] == const.DATASET_FOR_TUNING[params['train_mode']] and not params['LODO']: 
-                search_space_key = ['initial_space']
-            else: # only do epoch tunning:
-                if params['views'][0] in const.SUPPORTED_VIEWS:
-                    search_space_key = [backbone_name, params['views'][0]]
-                else:
-                    search_space_key = [backbone_name]
-            space = const.MODEL_HYPERTUNING_CHOICES[params['train_mode']]
-            for key in search_space_key:
-                space = space[key]
-            print(space)
-            print("="*40 + "\n")
-             
-            read_from_prev_study_path = os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'].split('/')[0], str(param['readstudyfrom']),'study_mid.pkl')
-            print(f'Read from study: {read_from_prev_study_path} exists: {os.path.exists(read_from_prev_study_path)}')
-            if not param['tune_fresh'] and os.path.exists(read_from_prev_study_path):
-                # Load the existing study
-                study = joblib.load(read_from_prev_study_path)
-                print(f"Resumed study with {len(study.trials)} trials.")
-                trials_left_to_do = param['ntrials'] - len(study.trials)
-                if trials_left_to_do < 1: trials_left_to_do = 1
-                print(f"{trials_left_to_do} trials left.")
-            else:
-                # Create a new study
-                if params['dataset'] != const.DATASET_FOR_TUNING[params['train_mode']] or params['LODO']: # only do epoch tunning
-                    sampler = optuna.samplers.GridSampler({'epochs': space['epochs']})
-                    study = optuna.create_study(direction='maximize', sampler=sampler)
-                else:
-                    study = optuna.create_study(direction='maximize')  # full search for BMCLab 
-                print("[INFO]: 🔎 Created a new study.")
-                trials_left_to_do = param['ntrials']
-                print(f"[INFO]: {trials_left_to_do} trials left.")
-                config_outpath = os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'], 'config')
-                with open(os.path.join(config_outpath, 'config_excluding_study_params.json'), 'w') as f:
-                    json.dump(params, f, indent=4)
-                shutil.copy(f"./configs/{backbone_name}/{fi}", os.path.join(config_outpath, f'originalfile_{fi}'))
-                params['configname_thisrunnum'] = fi.split('.json')[0] + '_run' + str(this_run_num)
-            
-            params['trials_left_to_do'] = trials_left_to_do
-            print("\n" + "="*40)
-            print(f"[INFO]: ⚙️ Hypertuning {params['backbone']} on {params['dataset']}{'_LODO' if params['LODO'] else ''} of type {params['data_type']} ⚙️")
-            save_study_callback = SaveStudyCallback(save_frequency=1, file_path=os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'],'study_mid.pkl'))
-            study.optimize(lambda trial: objective_hyperparam_opt_CV(trial, splits, backbone_name, params['experiment_name'] + '/' + params['model_prefix'], params, search_space_key), n_trials=trials_left_to_do, callbacks=[save_study_callback])
-            
-            print(f"Number of finished trials on {params['dataset']}{'_LODO' if params['LODO'] else ''} with {backbone_name}:", len(study.trials))
-            print(f"Best trial on {params['dataset']}{'_LODO' if params['LODO'] else ''} with {backbone_name}:", study.best_trial.params)
-            print(f"Best trial metadata: {study.best_trial.user_attrs}, 'avg_best_epoch' denotes the optimal number of epochs found")
-            print(f"avg f1 score of best trial on {params['dataset']}{'_LODO' if params['LODO'] else ''} with {backbone_name}: {study.best_value}")
-            print(f"best trial number on {params['dataset']}{'_LODO' if params['LODO'] else ''} with {backbone_name}: {study.best_trial.number}")
-            best_params = study.best_trial.params
-            best_params['best_trial_number'] = study.best_trial.number
-            tags = [
-                f"{backbone_name}",
-                f"dataset:{params['dataset']}",
-                f"LODO:{params['LODO']}",
-                f"train_mode:{params['train_mode']}",
-                f"num_folds:{params['num_folds']}",
-                f"run_num:{params['this_run_num']}"
-            ]
-            wandb.init(
-                project='MotionEncoderEvaluator',
-                name=f"{backbone_name}_{params['dataset']}{'_LODO' if params['LODO'] else ''}_final",
-                group=params['experiment_name'], 
-                job_type='hyperparam_study',
-                tags=tags,
-                reinit=True
-            )
-            wandb.config.update({'params': params})
-            wandb.config.update({'best_optuna_params': study.best_trial.params})
-            wandb.config.update({'best_trial_number': study.best_trial.number})
-            wandb.config.update({'best_val_f1_score': study.best_value})
-            wandb.log({
-                'best_val_f1_score': study.best_value,
-                'best_trial_number': study.best_trial.number,
-                'best_optuna_params': study.best_trial.params
-            })
-            wandb.finish()
-            joblib.dump(study, os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'],'study.pkl'))
-            print('[INFO] 🏁🏁🏁 Hypertuning Finished 🏁🏁🏁, Study saved at:', os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'],'study.pkl'))
-            
-        # == Intra-dataset testing ==    
-        elif EXP == 'perform_intra_dataset_test':
+        if EXP == 'perform_intra_dataset_test':
             exp_path = os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'], str(params['this_run_num']))
             params['model_prefix'] = params['model_prefix'] + '/' + str(params['this_run_num'])
-            with open(os.path.join(exp_path, 'config', 'config_excluding_study_params.json'), 'r') as f:
-                saved_config = json.load(f)
-            utils.compare_two_configs(saved_config, params)
-            params, best_params = load_hyperparams_from_study(params, backbone_name, exp_path, fallback_json_path=param.get('tuned_model_config'))
+            os.makedirs(os.path.join(exp_path, 'config'), exist_ok=True)
+            params, best_params = load_hyperparams_from_study(params, backbone_name, exp_path, fallback_json_path=param.get('tuned_config'))
             lodo_suffix = '_LODO' if params['LODO'] else ''
             clarification_str = f"train_{params['dataset']}{lodo_suffix}_test_{params['dataset']}{lodo_suffix}_{params['num_folds']}fold"
             model_checkpoint_clarification_str = f"train_{params['dataset']}{lodo_suffix}_{params['num_folds']}fold"
@@ -558,7 +282,7 @@ if __name__ == '__main__':
         elif EXP == 'perform_cross_dataset_test':
             exp_path = os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'], str(params['this_run_num']))
             params['model_prefix'] = params['model_prefix'] + '/' + str(params['this_run_num'])
-            params, best_params = load_hyperparams_from_study(params, backbone_name, exp_path, fallback_json_path=param.get('tuned_model_config'))
+            params, best_params = load_hyperparams_from_study(params, backbone_name, exp_path, fallback_json_path=param.get('tuned_config'))
             train_dataset_name = params['dataset']
             all_other_datasets = [x for x in const.SUPPORTED_DATASETS if x != train_dataset_name]
             print(f"Testing cross-dataset performance of {backbone_name} trained on {train_dataset_name}. Testing on: {all_other_datasets}")
@@ -591,7 +315,7 @@ if __name__ == '__main__':
         elif EXP == 'perform_cross_dataset_test_LODO':
             exp_path = os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'], str(params['this_run_num']))
             params['model_prefix'] = params['model_prefix'] + '/' + str(params['this_run_num'])
-            params, best_params = load_hyperparams_from_study(params, backbone_name, exp_path, fallback_json_path=param.get('tuned_model_config'))
+            params, best_params = load_hyperparams_from_study(params, backbone_name, exp_path, fallback_json_path=param.get('tuned_config'))
 
             all_other_datasets = [x for x in const.SUPPORTED_DATASETS if x != params['dataset']]
             print(f"Testing cross-dataset performance of {backbone_name} trained on {all_other_datasets}. Testing on: {params['dataset']}")
@@ -629,7 +353,7 @@ if __name__ == '__main__':
             exp_path = os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'], str(params['this_run_num']))
             params['model_prefix'] = params['model_prefix'] + '/' + str(params['this_run_num'])
             print(exp_path)
-            params, best_params = load_hyperparams_from_study(params, backbone_name, exp_path, fallback_json_path=param.get('tuned_model_config'))
+            params, best_params = load_hyperparams_from_study(params, backbone_name, exp_path, fallback_json_path=param.get('tuned_config'))
             all_other_datasets = [x for x in const.SUPPORTED_DATASETS if x != params['dataset']]
             print(f"Testing cross-dataset performance of {backbone_name} trained on {all_other_datasets} + train of {params['dataset']}. Testing on test of: {params['dataset']}")
         

@@ -235,7 +235,7 @@ MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
 --------
 To run using predefined best configs you can pass directly the best model configs:
 ```
-python run_eval_only.py \
+python eval_only.py \
   --backbone MODELNAME \
   --config CONFIGNAME.json \
   --hypertune 0 \
@@ -296,7 +296,7 @@ MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
 --------
 To run using predefined best configs you can pass directly the best model configs:
 ```
-python run_eval_only.py \
+python eval_only.py \
   --backbone MODELNAME \
   --config CONFIGNAME.json \
   --hypertune 0 \
@@ -383,6 +383,18 @@ python run.py \
     "LODO/MODELNAME_CONFIGNAME_sideright_LODO/0"
 ```
 MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
+
+--------
+To run using predefined best configs you can pass directly the best model configs:
+```
+python eval_only.py \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
+  --hypertune 0 \
+  --cross_dataset_test 1\
+  --force_LODO 1 \
+  "--tuned_config", "./configs/best_configs_augmented/LODO/....json"
+```
 
 </details>
 

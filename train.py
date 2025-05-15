@@ -299,7 +299,7 @@ def train_model(params, class_weights, train_loader, val_loader, model, fold, ba
             checkpoint_root_path = os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'], 'models', params['model_checkpoint_clarification_str'])
         else:
             checkpoint_root_path = os.path.join(path.OUT_PATH, params['experiment_name'], params['model_prefix'], 'models')
-        if not os.path.exists(checkpoint_root_path): os.mkdir(checkpoint_root_path)
+        if not os.path.exists(checkpoint_root_path): os.makedirs(checkpoint_root_path, exist_ok=True)
         save_checkpoint(checkpoint_root_path, epoch, lr_backbone, optimizer, model, fold, latest=True)
         print(f'Checkpoint saved at: {checkpoint_root_path}')
     
