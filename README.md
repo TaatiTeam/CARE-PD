@@ -226,12 +226,23 @@ python run.py \
   --this_run_num 0 \
   --num_folds -1 \
   --combine_views_preds 1 \
-  --prefer_right 1 \
   --views_path \
     "Hypertune/MODELNAME_CONFIGNAME_backright/0" \
     "Hypertune/MODELNAME_CONFIGNAME_sideright/0"
 ```
 MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
+
+--------
+To run using predefined best configs you can pass directly the best model configs:
+```
+python run_eval_only.py \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
+  --hypertune 0 \
+  --num_folds -1 \
+  "--tuned_config", "./configs/best_configs_augmented/Hypertune/poseformerv2_TRI_PD_backright/0/best_params.json"
+```
+
 </details>
 
 ### 🌍 Cross-Dataset Evaluation
@@ -276,7 +287,6 @@ python run.py \
   --hypertune 0 \
   --cross_dataset_test 1 \
   --combine_views_preds 1 \
-  --prefer_right 1 \
   --views_path \
     "Hypertune/MODELNAME_CONFIGNAME_backright/0" \
     "Hypertune/MODELNAME_CONFIGNAME_sideright/0"
