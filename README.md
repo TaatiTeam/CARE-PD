@@ -137,7 +137,7 @@ Pretrained checkpoints will be downloaded in `assets/Pretrained_checkpoints`
 
 # 🚀 Running code
 
-
+The output for each experiment will be saved inside a folder in `experiment_outs/**experiment_name**` specified in the config json file. To see full list for configs please check the config generator for each model inside `./configs` folder.
 
 ### 🔍 Hyperparameter Tuning
 
