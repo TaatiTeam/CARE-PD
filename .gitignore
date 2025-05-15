@@ -9,5 +9,5 @@ reports/*
 assets/preprocessed_data/*
 experiment_outs/*
 wandb/*
-pretext/motionagformer/checkpoint
-pretext/momask/checkpoint
+pretext/motionagformer/checkpoint/*
+pretext/momask/checkpoint/*
