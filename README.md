@@ -240,7 +240,7 @@ python run_eval_only.py \
   --config CONFIGNAME.json \
   --hypertune 0 \
   --num_folds -1 \
-  "--tuned_config", "./configs/best_configs_augmented/Hypertune/poseformerv2_TRI_PD_backright/0/best_params.json"
+  "--tuned_config", "./configs/best_configs_augmented/....json"
 ```
 
 </details>
@@ -292,6 +292,19 @@ python run.py \
     "Hypertune/MODELNAME_CONFIGNAME_sideright/0"
 ```
 MODELNAME in (motionbert, mixste, poseformerv2, motionagformer).
+
+--------
+To run using predefined best configs you can pass directly the best model configs:
+```
+python run_eval_only.py \
+  --backbone MODELNAME \
+  --config CONFIGNAME.json \
+  --hypertune 0 \
+  --cross_dataset_test 1\
+  "--tuned_config", "./configs/best_configs_augmented/....json"
+```
+
+
 </details>
 
 ### 🌐 Leave One Dataset Out Evaluation (LODO)
