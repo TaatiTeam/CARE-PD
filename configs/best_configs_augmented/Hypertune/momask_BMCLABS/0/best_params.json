@@ -1,0 +1,13 @@
+{
+    "epochs": 44,
+    "lr": 0.001,
+    "lr_backbone": 0.0001,
+    "batch_size": 128,
+    "optimizer": "AdamW",
+    "lambda_l1": 0,
+    "dropout_rate": 0,
+    "criterion": "WCELoss",
+    "classifier_hidden_dims": "no_hidden_layers",
+    "weight_decay": 0,
+    "best_trial_number": 27
+}

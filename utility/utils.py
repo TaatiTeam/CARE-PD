@@ -194,3 +194,43 @@ def get_last_folder(base_path):
     except FileNotFoundError:
         pass  # base_path doesn't exist, stick with '0'
     return str(int(largest_folder)+1)
+
+
+def load_hyperparams_from_json(params, exp_path):
+    # First try: explicit path if passed
+    if "best_config_path" in params and os.path.isfile(params["best_config_path"]):
+        config_path = params["best_config_path"]
+    else:
+        config_path = os.path.join(exp_path, "best_config.json")
+    
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"[ERROR] Could not find best_config.json at: {config_path}")
+
+    print(f"[INFO] Loading fixed best hyperparameters from {config_path}")
+    with open(config_path, "r") as f:
+        best_params = json.load(f)
+
+    # === Set into params ===
+    params['classifier_dropout'] = best_params['dropout_rate']
+    params['classifier_hidden_dims'] = best_params['classifier_hidden_dims']
+    params['batch_size'] = best_params['batch_size']
+    params['optimizer'] = best_params['optimizer']
+    params['lr_head'] = best_params['lr']
+    params['epochs'] = best_params['epochs']
+    params['lambda_l1'] = best_params['lambda_l1']
+    params['criterion'] = best_params['criterion']
+    
+    if params['criterion'] == 'FocalLoss':
+        params['alpha'] = best_params['alpha']
+        params['gamma'] = best_params['gamma']
+    if params['optimizer'] in ['AdamW', 'Adam', 'RMSprop']:
+        params['weight_decay'] =  best_params['weight_decay']
+    if params['optimizer'] == 'SGD':
+        params['momentum'] = best_params['momentum']
+    if 'lr_backbone' in best_params:
+        params['lr_backbone'] = best_params['lr_backbone']
+    if 'weight_decay_backbone' in best_params:
+        params['weight_decay_backbone'] = best_params['weight_decay_backbone']
+
+    print("✅ Loaded best fixed config:", best_params)
+    return params, best_params
