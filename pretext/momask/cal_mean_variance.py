@@ -4,23 +4,35 @@ import os
 from os.path import join as pjoin
 import pandas as pd
 import re
+import pickle
+
 
 joints_num = 22
-save_dir = "./dataset/healthy/"
-data_dir = "./dataset/healthy/"
-dataset_list = ['Healthy_data']
+save_dir = "./assets/datasets/HumanML3D"
+data_dir = "./assets/datasets/HumanML3D"
+dataset_list = ['DNE', '3DGait', 'BMClab', 'PDGAM', 'TRI_PD']
 split = "train"
+
+UPDRS_list = ['3DGait', 'BMClab', 'PDGAM']
+fold_dir = "./assets/datasets/folds"
 
 data_list = []
 for dataset in dataset_list:
+
     dataset_dir = os.path.join(data_dir, dataset)
-    # # --- Load and filter split annotations ---
-    # split_csv = os.path.join(data_dir, "metadata")
-    # csv_name = dataset + "_restructured_metadata.csv"
-    # split_csv = os.path.join(split_csv, csv_name)
-    # df = pd.read_csv(split_csv)
-    # df_split = df[df['split'] == split]
-    # walkIDs = df_split['walkID'].tolist()
+
+    # --- Load and filter split annotations ---
+    if dataset in UPDRS_list:
+        split_csv = os.path.join(data_dir, "Other_Datasets")
+    else:
+        split_csv = os.path.join(data_dir, "UPDRS_Datasets")
+
+    csv_name = dataset + "_restructured_metadata.csv"
+    split_csv = os.path.join(split_csv, csv_name)
+    df = pd.read_csv(split_csv)
+    df_split = df[df['split'] == split]
+    walkIDs = df_split['walkID'].tolist()
+
     npz_path = os.path.join(dataset_dir, "HumanML3D/HumanML3D_collected.npz")
     data = np.load(npz_path, allow_pickle=True)
     

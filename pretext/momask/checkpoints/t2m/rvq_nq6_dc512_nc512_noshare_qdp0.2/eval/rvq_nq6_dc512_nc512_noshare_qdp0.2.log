@@ -1,0 +1,7 @@
+net_best_fid.tar final result, epoch -1
+	FID: 0.272
+	MPJPE: 22.624
+	PAMPJE: 17.922
+	ACC Error: 4.336
+
+
