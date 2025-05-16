@@ -40,6 +40,8 @@ class MotionDataset(data.Dataset):
             dataset_dir = os.path.join(self.data_dir, dataset)
 
             # --- Load and filter split annotations ---
+            UPDRS_list = ['3DGait', 'BMCLab', 'PD-GAM']
+            fold_dir = "../../assets/datasets/folds"
             if dataset in UPDRS_list:
                 fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
             else:
@@ -151,6 +153,8 @@ class Text2MotionDatasetEval(data.Dataset):
             dataset_dir = os.path.join(self.data_dir, dataset)
 
             # --- Load and filter split annotations ---
+            UPDRS_list = ['3DGait', 'BMCLab', 'PD-GAM']
+            fold_dir = "../../assets/datasets/folds"
             if dataset in UPDRS_list:
                 fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
             else:

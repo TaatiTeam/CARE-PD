@@ -14,15 +14,14 @@ data_dir = "../../assets/datasets/HumanML3D"
 dataset_list = ['DNE', '3DGait', 'BMCLab', 'PD-GAM']
 split = "train"
 
-UPDRS_list = ['3DGait', 'BMCLab', 'PD-GAM']
-fold_dir = "../../assets/datasets/folds"
-
 data_list = []
 for dataset in dataset_list:
 
     dataset_dir = os.path.join(data_dir, dataset)
 
     # --- Load and filter split annotations ---
+    UPDRS_list = ['3DGait', 'BMCLab', 'PD-GAM']
+    fold_dir = "../../assets/datasets/folds"
     if dataset in UPDRS_list:
         fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
     else:
