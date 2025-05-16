@@ -5,56 +5,45 @@ from os.path import join as pjoin
 import pandas as pd
 import re
 import pickle
+import glob
 
 
 joints_num = 22
-save_dir = "./assets/datasets/HumanML3D"
-data_dir = "./assets/datasets/HumanML3D"
-dataset_list = ['DNE', '3DGait', 'BMClab', 'PDGAM', 'TRI_PD']
+save_dir = "../../assets/datasets/HumanML3D"
+data_dir = "../../assets/datasets/HumanML3D"
+dataset_list = ['DNE', '3DGait', 'BMCLab', 'PD-GAM']
 split = "train"
 
-UPDRS_list = ['3DGait', 'BMClab', 'PDGAM']
-fold_dir = "./assets/datasets/folds"
+UPDRS_list = ['3DGait', 'BMCLab', 'PD-GAM']
+fold_dir = "../../assets/datasets/folds"
 
 data_list = []
 for dataset in dataset_list:
 
     dataset_dir = os.path.join(data_dir, dataset)
-
     # --- Load and filter split annotations ---
     if dataset in UPDRS_list:
-        split_csv = os.path.join(data_dir, "Other_Datasets")
+        fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
     else:
-        split_csv = os.path.join(data_dir, "UPDRS_Datasets")
+        fold_path = os.path.join(fold_dir, "Other_Datasets")
 
-    csv_name = dataset + "_restructured_metadata.csv"
-    split_csv = os.path.join(split_csv, csv_name)
-    df = pd.read_csv(split_csv)
-    df_split = df[df['split'] == split]
-    walkIDs = df_split['walkID'].tolist()
-
-    npz_path = os.path.join(dataset_dir, "HumanML3D/HumanML3D_collected.npz")
-    data = np.load(npz_path, allow_pickle=True)
+    if dataset == "PD-GAM":
+        fold_path = os.path.join(fold_path, "PD-GaM_authors_fixed.pkl")
+    else:
+        fold_path = os.path.join(fold_path, dataset + "_fixed.pkl")
     
-    # data_dict = {re.sub(r'_down\d*', '', key): data[key] for key in data.files if re.sub(r'_down\d*', '', key) in walkIDs}
+    print(fold_path)
+    with open(fold_path, 'rb') as f:
+        fold_dict = pickle.load(f)
+
+    walkIDs = fold_dict[1][split]
+
+    npz_path = os.path.join(dataset_dir, "HumanML3D_collected.npz")
+    data = np.load(npz_path, allow_pickle=True)
+
     i = 1
     for key in data.files:
-        # base = re.sub(r'_down.*$', '', key)
         motion = data[key]
-
-        # print(motion.shape)
-        # from utils.motion_process import recover_from_ric
-        # import torch
-        # joint = recover_from_ric(torch.from_numpy(motion).float(), 22).numpy()
-        # print(joint.shape)
-        # from utils.plot_script import plot_3d_motion
-        # from utils.paramUtil import t2m_kinematic_chain
-        # kinematic_chain = t2m_kinematic_chain
-        # save_path = f"./visualization_healthy/sample_healthy_{i}.mp4"
-        # plot_3d_motion(save_path, kinematic_chain, joint, title="test_healthy", fps=20)
-        # i +=1
-        
-        # if (base in walkIDs):
         data_list.append(motion)      
 
 data = np.concatenate(data_list, axis=0)
