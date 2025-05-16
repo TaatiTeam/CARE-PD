@@ -170,12 +170,6 @@ class RVQTokenizerTrainer:
                     self.save(pjoin(self.opt.model_dir, 'latest.tar'), epoch, it)
 
                 cur_iter +=1
-            
-            presentation_np = np.concatenate(presentation, axis=0)
-            print(presentation_np.shape)
-            np.savez('presentation_pretrained_train.npz', result=presentation_np)
-            print("NPZ file has been saved!")
-            exit()
 
             self.save(pjoin(self.opt.model_dir, 'latest.tar'), epoch, it)
 
