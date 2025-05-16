@@ -56,13 +56,13 @@ def get_opt(opt_path, device, **kwargs):
     opt.meta_dir = pjoin(opt.save_root, 'meta')
 
     if opt.dataset_name == 't2m':
-        # opt.data_root = './dataset/HumanML3D/'
+        opt.data_root = "../../assets/datasets/HumanML3D"
         opt.finetune_dataset_name = "carepd" ###
-        root_mapper = {
-            'carepd' : './dataset/carepd/',
-            'healthy': './dataset/healthy/',
-        }
-        opt.data_root = root_mapper[opt.finetune_dataset_name]
+        # root_mapper = {
+        #     'carepd' : './dataset/carepd/',
+        #     'healthy': './dataset/healthy/',
+        # }
+        # opt.data_root = root_mapper[opt.finetune_dataset_name]
         opt.motion_dir = pjoin(opt.data_root, 'new_joint_vecs')
         opt.text_dir = pjoin(opt.data_root, 'texts')
         opt.joints_num = 22

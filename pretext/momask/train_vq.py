@@ -51,12 +51,12 @@ if __name__ == "__main__":
     os.makedirs(opt.log_dir, exist_ok=True)
 
     if opt.dataset_name == "t2m":
-        # opt.data_root = './dataset/HumanML3D/'
-        root_mapper = {
-            'carepd' : './dataset/carepd/',
-            'healthy': './dataset/healthy/',
-        }
-        opt.data_root = root_mapper[opt.finetune_dataset_name]
+        opt.data_root = "../../assets/datasets/HumanML3D"
+        # root_mapper = {
+        #     'carepd' : './dataset/carepd/',
+        #     'healthy': './dataset/healthy/',
+        # }
+        # opt.data_root = root_mapper[opt.finetune_dataset_name]
         opt.motion_dir = pjoin(opt.data_root, 'new_joint_vecs')
         opt.text_dir = pjoin(opt.data_root, 'texts')
         opt.joints_num = 22
@@ -86,11 +86,11 @@ if __name__ == "__main__":
     mean = np.load(pjoin(opt.data_root, 'Mean.npy'))
     std = np.load(pjoin(opt.data_root, 'Std.npy'))
 
-    mean_test = np.load(pjoin('./dataset/carepd/', 'Mean.npy'))
-    std_test = np.load(pjoin('./dataset/carepd/', 'Std.npy'))
+    # mean_test = np.load(pjoin('./dataset/carepd/', 'Mean.npy'))
+    # std_test = np.load(pjoin('./dataset/carepd/', 'Std.npy'))
 
-    print("mean path:", pjoin(opt.data_root, 'Mean.npy'))
-    print("mean_test path:", pjoin('./dataset/carepd/', 'Mean.npy'))
+    # print("mean path:", pjoin(opt.data_root, 'Mean.npy'))
+    # print("mean_test path:", pjoin('./dataset/carepd/', 'Mean.npy'))
 
     train_split_file = pjoin(opt.data_root, 'train.txt')
     val_split_file = pjoin(opt.data_root, 'val.txt')
@@ -126,12 +126,12 @@ if __name__ == "__main__":
 
     trainer = RVQTokenizerTrainer(opt, vq_model=net)
 
-    # train_dataset = MotionDataset(opt, mean, std, "train")
-    # val_dataset = MotionDataset(opt, mean_test, std_test, "test")
+    train_dataset = MotionDataset(opt, mean, std, "train")
+    val_dataset = MotionDataset(opt, mean_test, std_test, "test")
 
-    w_vectorizer = WordVectorizer('./glove', 'our_vab')
-    train_dataset = Text2MotionDatasetEval(opt, mean, std, train_split_file, w_vectorizer)
-    val_dataset = Text2MotionDatasetEval(opt, mean_test, std_test, val_split_file, w_vectorizer)
+    # w_vectorizer = WordVectorizer('./glove', 'our_vab')
+    # train_dataset = Text2MotionDatasetEval(opt, mean, std, train_split_file, w_vectorizer)
+    # val_dataset = Text2MotionDatasetEval(opt, mean_test, std_test, val_split_file, w_vectorizer)
 
     train_loader = DataLoader(train_dataset, batch_size=opt.batch_size, drop_last=True, num_workers=4,
                               shuffle=True, pin_memory=True)

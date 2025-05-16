@@ -28,9 +28,9 @@ class MotionDataset(data.Dataset):
         self.data_dir = opt.data_root
         self.data_list = [d for d in os.listdir(self.data_dir) if os.path.isdir(os.path.join(self.data_dir, d)) and d != 'metadata']
 
-        if split == "test":
-            self.data_dir = "./dataset/carepd/"
-            self.data_list = ['DNE', '3DGait', 'BMClab', 'PDGAM', 'TRI_PD']
+        # if split == "test":
+        #     self.data_dir = "./dataset/carepd/"
+        #     self.data_list = ['DNE', '3DGait', 'BMClab', 'PDGAM', 'TRI_PD']
 
         print("data_list:", self.data_list)
 
@@ -39,38 +39,31 @@ class MotionDataset(data.Dataset):
         for dataset in self.data_list:
             dataset_dir = os.path.join(self.data_dir, dataset)
 
-            # # --- Load and filter split annotations ---
-            # split_csv = os.path.join(self.data_dir, "metadata")
-            # csv_name = dataset + "_restructured_metadata.csv"
-            # split_csv = os.path.join(split_csv, csv_name)
-            # df = pd.read_csv(split_csv)
-            # df_split = df[df['split'] == split]
-            # walkIDs = df_split['walkID'].tolist()
-            if split == "test" or "carepd" in self.data_dir:
-                split_csv = os.path.join(self.data_dir, "metadata")
-                csv_name = dataset + "_restructured_metadata.csv"
-                split_csv = os.path.join(split_csv, csv_name)
-                df = pd.read_csv(split_csv)
-                df_split = df[df['split'] == split]
-                walkIDs = df_split['walkID'].tolist()
+            # --- Load and filter split annotations ---
+            if dataset in UPDRS_list:
+                fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
+            else:
+                fold_path = os.path.join(fold_dir, "Other_Datasets")
 
-            npz_path = os.path.join(dataset_dir, "HumanML3D/HumanML3D_collected.npz")
+            if dataset == "PD-GAM":
+                fold_path = os.path.join(fold_path, "PD-GaM_authors_fixed.pkl")
+            else:
+                fold_path = os.path.join(fold_path, dataset + "_fixed.pkl")
+            with open(fold_path, 'rb') as f:
+                fold_dict = pickle.load(f)
+            walkIDs = fold_dict[1][split]
+
+            npz_path = os.path.join(dataset_dir, "HumanML3D_collected.npz")
             data = np.load(npz_path, allow_pickle=True)
-
-            
 
             for key in data.files:
                 base = re.sub(r'_down.*$', '', key)
                 motion = data[key]
 
-                if split == "test" or "carepd" in self.data_dir:
-                    if (base in walkIDs) and (motion.shape[0] >= opt.window_size):
-                        self.lengths.append(motion.shape[0] - opt.window_size)
-                        self.data.append(motion) 
-                else:
-                    if (base not in healthy_exclude_list) and (motion.shape[0] >= opt.window_size):
-                        self.lengths.append(motion.shape[0] - opt.window_size)
-                        self.data.append(motion) 
+                if (base in walkIDs) and (motion.shape[0] >= opt.window_size):
+                    self.lengths.append(motion.shape[0] - opt.window_size)
+                    self.data.append(motion) 
+
 
         self.cumsum = np.cumsum([0] + self.lengths)
 
@@ -144,10 +137,12 @@ class Text2MotionDatasetEval(data.Dataset):
         new_name_list = []
         length_list = []
         
-        # self.data_dir = opt.data_root
-        self.data_dir = "./dataset/carepd/" ##
-        # self.data_list = [d for d in os.listdir(self.data_dir) if os.path.isdir(os.path.join(self.data_dir, d)) and d != 'metadata']
-        self.data_list = ['DNE', '3DGait', 'BMClab', 'PDGAM', 'TRI_PD']
+        self.data_dir = opt.data_root
+        self.data_list = [d for d in os.listdir(self.data_dir) if os.path.isdir(os.path.join(self.data_dir, d)) and d != 'metadata']
+
+        # self.data_dir = "./dataset/carepd/" ##
+        # self.data_list = ['DNE', '3DGait', 'BMClab', 'PDGAM', 'TRI_PD']
+
         split = "test"
 
         self.data = []
@@ -156,17 +151,22 @@ class Text2MotionDatasetEval(data.Dataset):
             dataset_dir = os.path.join(self.data_dir, dataset)
 
             # --- Load and filter split annotations ---
-            split_csv = os.path.join(self.data_dir, "metadata")
-            csv_name = dataset + "_restructured_metadata.csv"
-            split_csv = os.path.join(split_csv, csv_name)
-            df = pd.read_csv(split_csv)
-            df_split = df[df['split'] == split]
-            walkIDs = df_split['walkID'].tolist()
+            if dataset in UPDRS_list:
+                fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
+            else:
+                fold_path = os.path.join(fold_dir, "Other_Datasets")
 
-            npz_path = os.path.join(dataset_dir, "HumanML3D/HumanML3D_collected.npz")
+            if dataset == "PD-GAM":
+                fold_path = os.path.join(fold_path, "PD-GaM_authors_fixed.pkl")
+            else:
+                fold_path = os.path.join(fold_path, dataset + "_fixed.pkl")
+            with open(fold_path, 'rb') as f:
+                fold_dict = pickle.load(f)
+            walkIDs = fold_dict[1][split]
+
+            npz_path = os.path.join(dataset_dir, "HumanML3D_collected.npz")
             data = np.load(npz_path, allow_pickle=True)
 
-            # data_dict = {re.sub(r'_down\d*', '', key): data[key] for key in data.files if re.sub(r'_down\d*', '', key) in walkIDs}
             for key in data.files:
                 name = re.sub(r'_down.*$', '', key)
                 motion = data[key]

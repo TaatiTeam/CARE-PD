@@ -21,6 +21,7 @@ data_list = []
 for dataset in dataset_list:
 
     dataset_dir = os.path.join(data_dir, dataset)
+
     # --- Load and filter split annotations ---
     if dataset in UPDRS_list:
         fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
@@ -31,11 +32,8 @@ for dataset in dataset_list:
         fold_path = os.path.join(fold_path, "PD-GaM_authors_fixed.pkl")
     else:
         fold_path = os.path.join(fold_path, dataset + "_fixed.pkl")
-    
-    print(fold_path)
     with open(fold_path, 'rb') as f:
         fold_dict = pickle.load(f)
-
     walkIDs = fold_dict[1][split]
 
     npz_path = os.path.join(dataset_dir, "HumanML3D_collected.npz")

@@ -45,7 +45,7 @@ n_layers_pos: 1
 n_layers_pri: 1
 n_layers_seq_de: 2
 n_layers_seq_en: 1
-name: rvq_nq6_dc512_nc512_noshare_qdp0.2
+name: test
 num_experts: 4
 save_every_e: 10
 save_latest: 500
