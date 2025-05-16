@@ -27,8 +27,8 @@ class MotionDataset3D(Dataset):
         self.split = split  # 'train' or 'test'
         self.flip = True
 
-        self.data_list = ['DNE', '3DGait', 'BMClab', 'PDGAM', 'TRI_PD']
-        # self.data_list = ['Healthy_data']
+        self.data_list = ['DNE', '3DGait', 'BMCLab', 'PD-GAM']
+
         self.data_2d, self.data_3d, self.lambda_opts = [], [], []
         self.frame_ids = []
         self.last_frame_id = -1
@@ -38,12 +38,20 @@ class MotionDataset3D(Dataset):
             dataset_dir = os.path.join(self.data_dir, dataset)
 
             # --- Load and filter split annotations ---
-            split_csv = os.path.join(self.data_dir, "metadata")
-            csv_name = dataset + "_restructured_metadata.csv"
-            split_csv = os.path.join(split_csv, csv_name)
-            df = pd.read_csv(split_csv)
-            df_split = df[df['split'] == split]
-            walkIDs = df_split['walkID'].tolist()
+            UPDRS_list = ['3DGait', 'BMCLab', 'PD-GAM']
+            fold_dir = "../../assets/datasets/folds"
+            if dataset in UPDRS_list:
+                fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
+            else:
+                fold_path = os.path.join(fold_dir, "Other_Datasets")
+
+            if dataset == "PD-GAM":
+                fold_path = os.path.join(fold_path, "PD-GaM_authors_fixed.pkl")
+            else:
+                fold_path = os.path.join(fold_path, dataset + "_fixed.pkl")
+            with open(fold_path, 'rb') as f:
+                fold_dict = pickle.load(f)
+            walkIDs = fold_dict[1][split]
 
             # --- Load NPZ files (lazy-loading via NpzFile) ---
             pattern = os.path.join(dataset_dir, 'h36m', '*.npz')
@@ -52,9 +60,6 @@ class MotionDataset3D(Dataset):
             self.npz_2d = []  # for world2cam2img (2D)
             for path in npz_paths:
                 fname = os.path.basename(path)
-
-                # if 'backright' in fname:
-                #     continue
 
                 data = np.load(path, allow_pickle=True)
 
@@ -83,30 +88,6 @@ class MotionDataset3D(Dataset):
         print(np.asarray(self.data_3d).shape)
         print(len(self.lambda_opts))
         print(len(self.video_names))
-        # print(np.asarray(self.frame_ids).shape)
-        # print(np.asarray(self.frame_ids)[0])
-        # print(np.asarray(self.frame_ids)[1])
-
-        # print(np.asarray(self.data_2d)[0, :4])
-        # print(np.asarray(self.data_3d)[0, :4])
-        
-        # skel_format = [
-        #     [10, 9, 8, 7, 0, 1, 2, 3],
-        #     [0, 4, 5, 6],
-        #     [8, 11, 12, 13],
-        #     [8, 14, 15, 16]
-        # ]
-        
-        # projection = "3d"
-        # seq = np.asarray(self.data_3d)[0]
-
-        # if projection == '2d':
-        #     invert = True
-        #     minmax = [-1, 1, -1, 1]
-        # else:
-        #     invert = None
-        #     minmax = None
-        # visualize_sequence(seq, f'{"test_vis_3d"}', show_joint_indexes=True, joint_paths=skel_format, projection=projection, fps=30, invert=invert, minmax=minmax)
 
     def crop_scale(self, motion, scale_range=[1, 1]):
             '''

@@ -107,20 +107,9 @@ def train_one_epoch(args, model, train_loader, optimizer, device, losses):
         for i in range(batch_mask.shape[0]):
             batch_mask[i, arg_first[i][arg_first[i] >= 0]] = 1
 
-        # batch_mask = batch_mask.flatten()
-        # predicted_3d_pos = predicted_3d_pos.reshape(-1, 17, 3)[batch_mask]
-        # y = y.reshape(-1, 17, 3).contiguous()[batch_mask]
-
-        mask = batch_mask.bool().cuda()
-        mask_exp = mask.unsqueeze(-1).unsqueeze(-1)
-        pred_masked = predicted_3d_pos * mask_exp
-        
-        predicted_3d_pos_np = torch.mean(pred_masked, dim=1).cpu().detach().numpy()
-        # presentation.append(predicted_3d_pos_np)
-        for idx in range(len(video_names)):
-            presentation[video_names[idx]].append(predicted_3d_pos_np[idx])
-
-        continue
+        batch_mask = batch_mask.flatten()
+        predicted_3d_pos = predicted_3d_pos.reshape(-1, 17, 3)[batch_mask]
+        y = y.reshape(-1, 17, 3).contiguous()[batch_mask]
 
         optimizer.zero_grad()
 
@@ -152,18 +141,6 @@ def train_one_epoch(args, model, train_loader, optimizer, device, losses):
         loss_total.backward()
         optimizer.step()
 
-    # presentation_np = np.concatenate(presentation, axis=0)
-    # print(presentation_np.shape)
-    # np.savez('presentation_finetuned-healthy_train.npz', result=presentation_np)
-    print(len(presentation.keys()))
-    total_num = 0
-    for key in presentation.keys():
-        total_num += len(presentation[key])
-        presentation[key] = np.asarray(presentation[key])
-    print(total_num)
-    np.savez('presentation_CarePD_fromscratch_backright_train.npz', **presentation)
-    exit()
-
 def find_arg_first_occurrence(x):
     mask = torch.zeros_like(x, dtype=torch.int)
     for i, frame_ids in enumerate(x):
@@ -186,19 +163,15 @@ def evaluate(args, model, test_loader, device):
         for x, y, frame_ids, lambda_opts, video_names in tqdm(test_loader):
             x, y = x.to(device), y.to(device)
             
-            # args.flip = False
-            # if args.flip:
-            #     batch_input_flip = flip_data(x)
-            #     predicted_3d_pos_1 = model(x)
-            #     predicted_3d_pos_flip = model(batch_input_flip)
-            #     print(predicted_3d_pos.shape)
-            #     exit()
-            #     predicted_3d_pos_2 = flip_data(predicted_3d_pos_flip)  # Flip back
-            #     predicted_3d_pos = (predicted_3d_pos_1 + predicted_3d_pos_2) / 2
-            # else:
-            #     predicted_3d_pos = model(x)
-
-            predicted_3d_pos = model(x, return_rep=True)
+            args.flip = False
+            if args.flip:
+                batch_input_flip = flip_data(x)
+                predicted_3d_pos_1 = model(x)
+                predicted_3d_pos_flip = model(batch_input_flip)
+                predicted_3d_pos_2 = flip_data(predicted_3d_pos_flip)  # Flip back
+                predicted_3d_pos = (predicted_3d_pos_1 + predicted_3d_pos_2) / 2
+            else:
+                predicted_3d_pos = model(x)
 
             if args.root_rel:
                 predicted_3d_pos[:, :, 0, :] = 0  # [N,T,17,3]
@@ -210,20 +183,9 @@ def evaluate(args, model, test_loader, device):
             for i in range(batch_mask.shape[0]):
                 batch_mask[i, arg_first[i][arg_first[i] >= 0]] = 1
 
-            # batch_mask = batch_mask.flatten()
-            # predicted_3d_pos = predicted_3d_pos.reshape(-1, 17, 3)[batch_mask]
-            # y = y.reshape(-1, 17, 3).contiguous()[batch_mask]
-
-            mask = batch_mask.bool().cuda()
-            mask_exp = mask.unsqueeze(-1).unsqueeze(-1)
-            pred_masked = predicted_3d_pos * mask_exp
-            
-            predicted_3d_pos_np = torch.mean(pred_masked, dim=1).cpu().numpy()
-            # presentation.append(predicted_3d_pos_np)
-            for idx in range(len(video_names)):
-                presentation[video_names[idx]].append(predicted_3d_pos_np[idx])
-
-            continue
+            batch_mask = batch_mask.flatten()
+            predicted_3d_pos = predicted_3d_pos.reshape(-1, 17, 3)[batch_mask]
+            y = y.reshape(-1, 17, 3).contiguous()[batch_mask]
 
             mpjpe = torch.mean(torch.norm(predicted_3d_pos - y, dim=-1)) * 1000
             p_mpjpe = torch.mean(p_mpjpe_err(predicted_3d_pos, y), dim=-1) * 1000
@@ -238,18 +200,6 @@ def evaluate(args, model, test_loader, device):
             p_mpjpe_meter.update(p_mpjpe.item(), predicted_3d_pos.shape[0])
             acc_err_meter.update(acc_err.item(), predicted_3d_pos.shape[0])
     
-
-    # presentation_np = np.concatenate(presentation, axis=0)
-    # print(presentation_np.shape)
-    # np.savez('presentation_finetuned-healthy_test.npz', result=presentation_np)
-    print(len(presentation.keys()))
-    total_num = 0
-    for key in presentation.keys():
-        total_num += len(presentation[key])
-        presentation[key] = np.asarray(presentation[key])
-    print(total_num)
-    np.savez('presentation_CarePD_fromscratch_backright_test.npz', **presentation)
-    exit()
 
     print('Protocol #1 Error (MPJPE):', mpjpe_meter.avg, 'mm')
     print('Acceleration error:', acc_err_meter.avg, 'mm/s^2')
