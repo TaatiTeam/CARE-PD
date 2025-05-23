@@ -32,8 +32,8 @@ graph_only: False
 n_frames: 81 # 81 if add_velocity is False else 80
 
 # Data
-data_root: data/
-data_root_2d: data/
+data_root: ../../assets/datasets/h36m
+data_root_2d: ../../assets/datasets/h36m
 subset_list: [ H36M-81 ]
 dt_file: h36m_sh_conf_cam_source_final.pkl
 num_joints: 17

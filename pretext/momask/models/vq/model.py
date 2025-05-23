@@ -77,7 +77,7 @@ class RVQVAE(nn.Module):
         ## decoder
         x_out = self.decoder(x_quantized)
         # x_out = self.postprocess(x_decoder)
-        return x_out, commit_loss, perplexity, x_quantized
+        return x_out, commit_loss, perplexity
 
     def forward_decoder(self, x):
         x_d = self.quantizer.get_codes_from_indices(x)

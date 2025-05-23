@@ -51,7 +51,7 @@ def evaluation_vqvae(out_dir, val_loader, net, writer, ep, best_fid, best_div, b
 
         # pred_pose_eval = torch.zeros((bs, seq, motion.shape[-1])).cuda()
 
-        pred_pose_eval, loss_commit, perplexity, x_quantized = net(motion)
+        pred_pose_eval, loss_commit, perplexity = net(motion)
 
         _, em_pred = eval_wrapper.get_co_embeddings(word_embeddings, pos_one_hots, sent_len, pred_pose_eval,
                                                           m_length)
@@ -64,6 +64,7 @@ def evaluation_vqvae(out_dir, val_loader, net, writer, ep, best_fid, best_div, b
 
             mpjpe += torch.sum(calculate_mpjpe(gt, pred))
             pampjpe += torch.sum(calc_pampjpe(pred, gt))
+            pampjpe += 0
 
             accel_seq = calc_accel_error(pred, gt)                     # (T-2,)
             acc_err += torch.sum(accel_seq)
@@ -201,11 +202,11 @@ def evaluation_vqvae_inference(val_loader, net, eval_wrapper):
 
         # pred_pose_eval = torch.zeros((bs, seq, motion.shape[-1])).cuda()
 
-        pred_pose_eval, loss_commit, perplexity, x_quantized = net(motion)
+        pred_pose_eval, loss_commit, perplexity = net(motion)
         
-        x_quantized_np = x_quantized.detach().cpu().numpy()
-        result = np.array([x_quantized_np[i, :, :idx].mean(axis=1) for i, idx in enumerate(list(map(int, (m_length/4))))])
-        presentation.append(result)
+        # x_quantized_np = x_quantized.detach().cpu().numpy()
+        # result = np.array([x_quantized_np[i, :, :idx].mean(axis=1) for i, idx in enumerate(list(map(int, (m_length/4))))])
+        # presentation.append(result)
 
         _, em_pred = eval_wrapper.get_co_embeddings(word_embeddings, pos_one_hots, sent_len, pred_pose_eval,
                                                           m_length)
@@ -246,10 +247,10 @@ def evaluation_vqvae_inference(val_loader, net, eval_wrapper):
 
     fid = calculate_frechet_distance(gt_mu, gt_cov, mu, cov)
 
-    presentation_np = np.concatenate(presentation, axis=0)
-    print(presentation_np.shape)
-    np.savez('presentation_CarePD_test_finetuned.npz', result=presentation_np)
-    print("NPZ file has been saved!")
+    # presentation_np = np.concatenate(presentation, axis=0)
+    # print(presentation_np.shape)
+    # np.savez('presentation_CarePD_test_finetuned.npz', result=presentation_np)
+    # print("NPZ file has been saved!")
     # python eval_t2m_vq.py --gpu_id 0 --name rvq_carepd_finetune --dataset_name t2m --ext rvq_carepd_finetune
     
 

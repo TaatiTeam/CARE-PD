@@ -31,7 +31,7 @@ def plot_t2m(data, save_dir):
 
 
 if __name__ == "__main__":
-    # torch.autograd.set_detect_anomaly(True)
+
     opt = arg_parse(True)
     fixseed(opt.seed)
 
@@ -86,12 +86,6 @@ if __name__ == "__main__":
     mean = np.load(pjoin(opt.data_root, 'Mean.npy'))
     std = np.load(pjoin(opt.data_root, 'Std.npy'))
 
-    # mean_test = np.load(pjoin('./dataset/carepd/', 'Mean.npy'))
-    # std_test = np.load(pjoin('./dataset/carepd/', 'Std.npy'))
-
-    # print("mean path:", pjoin(opt.data_root, 'Mean.npy'))
-    # print("mean_test path:", pjoin('./dataset/carepd/', 'Mean.npy'))
-
     train_split_file = pjoin(opt.data_root, 'train.txt')
     val_split_file = pjoin(opt.data_root, 'val.txt')
 
@@ -118,20 +112,13 @@ if __name__ == "__main__":
     print(f'Loading VQ Model {opt.name} Completed!, Epoch {vq_epoch}')  
 
     pc_vq = sum(param.numel() for param in net.parameters())
-    print(net)
-    # print("Total parameters of discriminator net: {}".format(pc_vq))
-    # all_params += pc_vq_dis
 
     print('Total parameters of all models: {}M'.format(pc_vq/1000_000))
 
     trainer = RVQTokenizerTrainer(opt, vq_model=net)
 
     train_dataset = MotionDataset(opt, mean, std, "train")
-    val_dataset = MotionDataset(opt, mean_test, std_test, "test")
-
-    # w_vectorizer = WordVectorizer('./glove', 'our_vab')
-    # train_dataset = Text2MotionDatasetEval(opt, mean, std, train_split_file, w_vectorizer)
-    # val_dataset = Text2MotionDatasetEval(opt, mean_test, std_test, val_split_file, w_vectorizer)
+    val_dataset = MotionDataset(opt, mean, std, "eval")
 
     train_loader = DataLoader(train_dataset, batch_size=opt.batch_size, drop_last=True, num_workers=4,
                               shuffle=True, pin_memory=True)
@@ -141,8 +128,3 @@ if __name__ == "__main__":
 
     eval_val_loader, _ = get_dataset_motion_loader(dataset_opt_path, 32, 'val', device=opt.device)
     trainer.train(train_loader, val_loader, eval_val_loader, eval_wrapper, plot_t2m)
-
-## train_vq.py --dataset_name kit --batch_size 512 --name VQVAE_dp2 --gpu_id 3
-## train_vq.py --dataset_name kit --batch_size 256 --name VQVAE_dp2_b256 --gpu_id 2
-## train_vq.py --dataset_name kit --batch_size 1024 --name VQVAE_dp2_b1024 --gpu_id 1
-## python train_vq.py --dataset_name kit --batch_size 256 --name VQVAE_dp1_b256 --gpu_id 2
