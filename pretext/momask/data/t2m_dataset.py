@@ -9,7 +9,8 @@ import random
 import codecs as cs
 import os
 import re
-import pandas as pd 
+import pandas as pd
+import pickle
 
 from utils.get_opt import get_opt
 from options.vq_option import arg_parse
@@ -26,11 +27,7 @@ class MotionDataset(data.Dataset):
 
 
         self.data_dir = opt.data_root
-        self.data_list = [d for d in os.listdir(self.data_dir) if os.path.isdir(os.path.join(self.data_dir, d)) and d != 'metadata']
-
-        # if split == "test":
-        #     self.data_dir = "./dataset/carepd/"
-        #     self.data_list = ['DNE', '3DGait', 'BMClab', 'PDGAM', 'TRI_PD']
+        self.data_list = [d for d in os.listdir(self.data_dir) if os.path.isdir(os.path.join(self.data_dir, d))]
 
         print("data_list:", self.data_list)
 
@@ -40,17 +37,20 @@ class MotionDataset(data.Dataset):
             dataset_dir = os.path.join(self.data_dir, dataset)
 
             # --- Load and filter split annotations ---
-            UPDRS_list = ['3DGait', 'BMCLab', 'PD-GAM']
+            UPDRS_list = ['3DGait', 'BMCLab', 'PD-GaM', 'T-SDU-PD']
             fold_dir = "../../assets/datasets/folds"
             if dataset in UPDRS_list:
                 fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
             else:
                 fold_path = os.path.join(fold_dir, "Other_Datasets")
 
-            if dataset == "PD-GAM":
+            if dataset == "PD-GaM":
                 fold_path = os.path.join(fold_path, "PD-GaM_authors_fixed.pkl")
+            elif dataset == "T-SDU-PD":
+                fold_path = os.path.join(fold_path, "T-SDU-PD_PD_fixed.pkl")
             else:
                 fold_path = os.path.join(fold_path, dataset + "_fixed.pkl")
+
             with open(fold_path, 'rb') as f:
                 fold_dict = pickle.load(f)
             walkIDs = fold_dict[1][split]
@@ -59,13 +59,12 @@ class MotionDataset(data.Dataset):
             data = np.load(npz_path, allow_pickle=True)
 
             for key in data.files:
-                base = re.sub(r'_down.*$', '', key)
+                base = key.split('__', 1)[0]
                 motion = data[key]
 
                 if (base in walkIDs) and (motion.shape[0] >= opt.window_size):
                     self.lengths.append(motion.shape[0] - opt.window_size)
                     self.data.append(motion) 
-
 
         self.cumsum = np.cumsum([0] + self.lengths)
 
@@ -140,12 +139,9 @@ class Text2MotionDatasetEval(data.Dataset):
         length_list = []
         
         self.data_dir = opt.data_root
-        self.data_list = [d for d in os.listdir(self.data_dir) if os.path.isdir(os.path.join(self.data_dir, d)) and d != 'metadata']
+        self.data_list = [d for d in os.listdir(self.data_dir) if os.path.isdir(os.path.join(self.data_dir, d))]
 
-        # self.data_dir = "./dataset/carepd/" ##
-        # self.data_list = ['DNE', '3DGait', 'BMClab', 'PDGAM', 'TRI_PD']
-
-        split = "test"
+        split = "eval"
 
         self.data = []
         self.lengths = []
@@ -153,17 +149,20 @@ class Text2MotionDatasetEval(data.Dataset):
             dataset_dir = os.path.join(self.data_dir, dataset)
 
             # --- Load and filter split annotations ---
-            UPDRS_list = ['3DGait', 'BMCLab', 'PD-GAM']
+            UPDRS_list = ['3DGait', 'BMCLab', 'PD-GaM', 'T-SDU-PD']
             fold_dir = "../../assets/datasets/folds"
             if dataset in UPDRS_list:
                 fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
             else:
                 fold_path = os.path.join(fold_dir, "Other_Datasets")
 
-            if dataset == "PD-GAM":
+            if dataset == "PD-GaM":
                 fold_path = os.path.join(fold_path, "PD-GaM_authors_fixed.pkl")
+            elif dataset == "T-SDU-PD":
+                fold_path = os.path.join(fold_path, "T-SDU-PD_PD_fixed.pkl")
             else:
                 fold_path = os.path.join(fold_path, dataset + "_fixed.pkl")
+
             with open(fold_path, 'rb') as f:
                 fold_dict = pickle.load(f)
             walkIDs = fold_dict[1][split]
@@ -172,10 +171,10 @@ class Text2MotionDatasetEval(data.Dataset):
             data = np.load(npz_path, allow_pickle=True)
 
             for key in data.files:
-                name = re.sub(r'_down.*$', '', key)
+                name = key.split('__', 1)[0]
                 motion = data[key]
 
-                if (name not in walkIDs) or (len(motion)) < min_motion_len or (len(motion) >= 200):
+                if (name in walkIDs) or (len(motion)) < min_motion_len or (len(motion) >= 200):
                     continue
                 
                 text_data = []

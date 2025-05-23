@@ -86,7 +86,7 @@ def p_mpjpe_err(predicted, target):
 def train_one_epoch(args, model, train_loader, optimizer, device, losses):
     model.train()
     presentation = defaultdict(list)
-    for x, y, frame_ids, _, video_names in tqdm(train_loader):
+    for x, y, frame_ids in tqdm(train_loader):
         batch_size = x.shape[0]
         x, y = x.to(device), y.to(device)
 
@@ -96,11 +96,7 @@ def train_one_epoch(args, model, train_loader, optimizer, device, losses):
             else:
                 y[..., 2] = y[..., 2] - y[:, 0:1, 0:1, 2]  # Place the depth of first frame root to be 0
 
-        # pred = model(x)  # (N, T, 17, 3)
-        
-        with torch.no_grad():
-            predicted_3d_pos = model(x, return_rep=True)
-
+        pred = model(x)  # (N, T, 17, 3)
 
         arg_first = find_arg_first_occurrence(frame_ids)
         batch_mask = torch.zeros_like(arg_first, dtype=bool)
@@ -160,7 +156,7 @@ def evaluate(args, model, test_loader, device):
     presentation = defaultdict(list)
 
     with torch.no_grad():
-        for x, y, frame_ids, lambda_opts, video_names in tqdm(test_loader):
+        for x, y, frame_ids in tqdm(test_loader):
             x, y = x.to(device), y.to(device)
             
             args.flip = False
@@ -178,7 +174,7 @@ def evaluate(args, model, test_loader, device):
             else:
                 y[:, 0, 0, 2] = 0
 
-            arg_first = find_arg_first_occurrence(frame_ids)
+            arg_first = find_arg_first_occurrence(frame_ids).long()
             batch_mask = torch.zeros_like(arg_first, dtype=bool)
             for i in range(batch_mask.shape[0]):
                 batch_mask[i, arg_first[i][arg_first[i] >= 0]] = 1
@@ -223,7 +219,7 @@ def train(args, opts):
     create_directory_if_not_exists(opts.new_checkpoint)
 
     train_dataset = MotionDataset3D(args.data_root, 'train')
-    test_dataset = MotionDataset3D(args.data_root, 'test')
+    test_dataset = MotionDataset3D(args.data_root, 'eval')
 
     common_loader_params = {
         'batch_size': args.batch_size,

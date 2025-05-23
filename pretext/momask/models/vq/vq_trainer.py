@@ -51,7 +51,7 @@ class RVQTokenizerTrainer:
 
     def forward(self, batch_data):
         motions = batch_data.detach().to(self.device).float()
-        pred_motion, loss_commit, perplexity, x_quantized = self.vq_model(motions)
+        pred_motion, loss_commit, perplexity = self.vq_model(motions)
         
         self.motions = motions
         self.pred_motion = pred_motion
@@ -65,7 +65,7 @@ class RVQTokenizerTrainer:
 
         # return loss, loss_rec, loss_vel, loss_commit, perplexity
         # return loss, loss_rec, loss_percept, loss_commit, perplexity
-        return loss, loss_rec, loss_explicit, loss_commit, perplexity, x_quantized
+        return loss, loss_rec, loss_explicit, loss_commit, perplexity
 
 
     # @staticmethod
@@ -118,11 +118,11 @@ class RVQTokenizerTrainer:
         logs = defaultdict(def_value, OrderedDict())
 
         # sys.exit()
-        best_fid, best_div, best_top1, best_top2, best_top3, best_matching, best_mpjpe, mpjpe, writer = evaluation_vqvae(
-            self.opt.model_dir, eval_val_loader, self.vq_model, self.logger, epoch, best_fid=1000,
-            best_div=100, best_top1=0,
-            best_top2=0, best_top3=0, best_matching=100, best_mpjpe=1000,
-            eval_wrapper=eval_wrapper, save=False)
+        # best_fid, best_div, best_top1, best_top2, best_top3, best_matching, best_mpjpe, mpjpe, writer = evaluation_vqvae(
+        #     self.opt.model_dir, eval_val_loader, self.vq_model, self.logger, epoch, best_fid=1000,
+        #     best_div=100, best_top1=0,
+        #     best_top2=0, best_top3=0, best_matching=100, best_mpjpe=1000,
+        #     eval_wrapper=eval_wrapper, save=False)
         
         
         while epoch < self.opt.max_epoch:
@@ -134,15 +134,15 @@ class RVQTokenizerTrainer:
                 it += 1
                 if it < self.opt.warm_up_iter:
                     current_lr = self.update_lr_warm_up(it, self.opt.warm_up_iter, self.opt.lr)
-                loss, loss_rec, loss_vel, loss_commit, perplexity, x_quantized = self.forward(motion)
+                loss, loss_rec, loss_vel, loss_commit, perplexity = self.forward(motion)
                 self.opt_vq_model.zero_grad()
                 loss.backward()
                 self.opt_vq_model.step()
                 
                 
-                x_quantized_np = x_quantized.detach().cpu().numpy()
-                result = np.array([x_quantized_np[i, :, :idx].mean(axis=1) for i, idx in enumerate(list(map(int, (m_length/4))))])
-                presentation.append(result)
+                # x_quantized_np = x_quantized.detach().cpu().numpy()
+                # result = np.array([x_quantized_np[i, :, :idx].mean(axis=1) for i, idx in enumerate(list(map(int, (m_length/4))))])
+                # presentation.append(result)
 
                 if it >= self.opt.warm_up_iter:
                     self.scheduler.step()
@@ -186,7 +186,7 @@ class RVQTokenizerTrainer:
             val_perpexity = []
             with torch.no_grad():
                 for i, batch_data in enumerate(val_loader):
-                    loss, loss_rec, loss_vel, loss_commit, perplexity, x_quantized = self.forward(batch_data)
+                    loss, loss_rec, loss_vel, loss_commit, perplexity = self.forward(batch_data)
                     # val_loss_rec += self.l1_criterion(self.recon_motions, self.motions).item()
                     # val_loss_emb += self.embedding_loss.item()
                     val_loss.append(loss.item())

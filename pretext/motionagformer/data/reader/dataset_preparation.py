@@ -8,6 +8,7 @@ import copy
 import torch
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
+import pickle
 # from visualize_skel_walk_func import visualize_sequence
 
 def flip_data(data, left_joints=[1, 2, 3, 14, 15, 16], right_joints=[4, 5, 6, 11, 12, 13]):
@@ -27,7 +28,7 @@ class MotionDataset3D(Dataset):
         self.split = split  # 'train' or 'test'
         self.flip = True
 
-        self.data_list = ['DNE', '3DGait', 'BMCLab', 'PD-GAM']
+        self.data_list = [d for d in os.listdir(self.data_dir) if os.path.isdir(os.path.join(self.data_dir, d))]
 
         self.data_2d, self.data_3d, self.lambda_opts = [], [], []
         self.frame_ids = []
@@ -38,23 +39,26 @@ class MotionDataset3D(Dataset):
             dataset_dir = os.path.join(self.data_dir, dataset)
 
             # --- Load and filter split annotations ---
-            UPDRS_list = ['3DGait', 'BMCLab', 'PD-GAM']
+            UPDRS_list = ['3DGait', 'BMCLab', 'PD-GaM', 'T-SDU-PD']
             fold_dir = "../../assets/datasets/folds"
             if dataset in UPDRS_list:
                 fold_path = os.path.join(fold_dir, "UPDRS_Datasets")
             else:
                 fold_path = os.path.join(fold_dir, "Other_Datasets")
 
-            if dataset == "PD-GAM":
+            if dataset == "PD-GaM":
                 fold_path = os.path.join(fold_path, "PD-GaM_authors_fixed.pkl")
+            elif dataset == "T-SDU-PD":
+                fold_path = os.path.join(fold_path, "T-SDU-PD_PD_fixed.pkl")
             else:
                 fold_path = os.path.join(fold_path, dataset + "_fixed.pkl")
+
             with open(fold_path, 'rb') as f:
                 fold_dict = pickle.load(f)
             walkIDs = fold_dict[1][split]
 
             # --- Load NPZ files (lazy-loading via NpzFile) ---
-            pattern = os.path.join(dataset_dir, 'h36m', '*.npz')
+            pattern = os.path.join(dataset_dir, '*.npz')
             npz_paths = glob.glob(pattern)
             self.npz_3d = []  # for world2cam (3D)
             self.npz_2d = []  # for world2cam2img (2D)
@@ -63,9 +67,8 @@ class MotionDataset3D(Dataset):
 
                 data = np.load(path, allow_pickle=True)
 
-                data_dict = {re.sub(r'_down\d*', '', key): data[key] for key in data.files if re.sub(r'_down\d*', '', key) in walkIDs}
-                # data_dict = {re.sub(r'_down\d*', '', key): data[key] for key in data.files}
-
+                data_dict = {key.split('__', 1)[0]: data[key] for key in data.files if key.split('__', 1)[0] in walkIDs}
+                
                 if 'world2cam2img' in fname:
                     self.npz_2d.append(data_dict)
                 elif 'world2cam' in fname:
@@ -79,6 +82,7 @@ class MotionDataset3D(Dataset):
             self.frame_ids.extend(frame_ids)
             self.lambda_opts.extend(lambda_opts)
             self.video_names.extend(labels)
+            
         
         ll = set()
         for ele in self.video_names:
@@ -220,8 +224,6 @@ class MotionDataset3D(Dataset):
 
         pose2d = self.data_2d[idx]
         frame_ids = self.frame_ids[idx]
-        lambda_opts = self.lambda_opts[idx]
-        video_name = self.video_names[idx]
 
         T, J, _ = pose2d.shape
         ones = np.ones((T, J, 1), dtype=pose2d.dtype)  # 1 as confidence score
@@ -230,14 +232,6 @@ class MotionDataset3D(Dataset):
         # Convert to torch tensors
         motion_2d = torch.from_numpy(pose2d).float()
         motion_3d = torch.from_numpy(pose3d).float()
-
-        # if self.add_velocity:
-        #     motion_2d_coord = motion_2d[..., :2]
-        #     velocity_motion_2d = motion_2d_coord[1:] - motion_2d_coord[:-1]
-        #     motion_2d = motion_2d[:-1]
-        #     motion_2d = np.concatenate((motion_2d, velocity_motion_2d), axis=-1)
-
-        #     motion_3d = motion_3d[:-1]
 
         if self.split == 'train':
             if self.flip and random.random() > 0.5:
@@ -248,9 +242,7 @@ class MotionDataset3D(Dataset):
         return (
             torch.FloatTensor(motion_2d),     # [N,T,2]
             torch.FloatTensor(motion_3d),     # [N,T,3]
-            torch.FloatTensor(frame_ids),     # [N]  or whatever
-            lambda_opts,                      # leave as-is (string/dict/number)
-            video_name                        # leave as-is (string)
+            torch.FloatTensor(frame_ids)                    # leave as-is (string)
         )
 
         
